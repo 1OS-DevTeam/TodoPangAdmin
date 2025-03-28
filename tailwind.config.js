@@ -1,4 +1,4 @@
-import { colors } from "./src/constants";
+import { Colors } from "./src/common";
 
 const makePxToRem = (num) => ({
   ...Array.from(Array(num + 1)).reduce((acc, cur, i) => {
@@ -14,23 +14,23 @@ export default {
     colors: {
       primary: "#000",
       secondary: "#252525",
-      white: colors.white,
-      black: colors.black,
+      white: Colors.white,
+      black: Colors.black,
       transparent: "transparent",
-      dark: colors.dark,
-      gray: colors.gray,
-      red: colors.red,
-      pink: colors.pink,
-      grape: colors.grape,
-      violet: colors.violet,
-      indigo: colors.indigo,
-      blue: colors.blue,
-      cyan: colors.cyan,
-      teal: colors.teal,
-      green: colors.green,
-      lime: colors.lime,
-      yellow: colors.yellow,
-      orange: colors.orange,
+      dark: Colors.dark,
+      gray: Colors.gray,
+      red: Colors.red,
+      pink: Colors.pink,
+      grape: Colors.grape,
+      violet: Colors.violet,
+      indigo: Colors.indigo,
+      blue: Colors.blue,
+      cyan: Colors.cyan,
+      teal: Colors.teal,
+      green: Colors.green,
+      lime: Colors.lime,
+      yellow: Colors.yellow,
+      orange: Colors.orange,
     },
     fontFamily: { pretendard: ["Pretendard"] },
     extend: {
