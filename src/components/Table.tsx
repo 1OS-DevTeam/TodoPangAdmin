@@ -39,12 +39,12 @@ const Table = <T,>({ columns, data, columnRatios }: TableProps<T>) => {
         {data.map((row, index) => (
           <tr
             key={index}
-            className={`text-left border-b-1 ${index !== data.length - 1 ? "border-gray-1" : "border-transparent"}`}
+            className={`text-left border-b-1 ${index !== data.length - 1 ? "border-gray-1" : "border-transparent"} hover:bg-[#f8fdffee]`}
           >
             {columns.map((column, index) => (
               <td
                 key={String(column.key)}
-                className={`px-4 py-16 text-gray-7 ${index === columns.length - 1 ? "text-right" : "text-left"}`}
+                className={`py-12 text-gray-7`}
                 style={{ width: computedWidths[index] }}
               >
                 {column.render

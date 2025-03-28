@@ -1,5 +1,6 @@
 import React from "react";
 import { IoClose } from "@react-icons/all-files/io5/IoClose";
+import { AiOutlineLoading3Quarters } from "@react-icons/all-files/ai/AiOutlineLoading3Quarters";
 
 interface Props {
   isOpen: boolean;
@@ -7,6 +8,7 @@ interface Props {
   children: React.ReactNode;
   title: string;
   buttonTitle: string;
+  isButtonLoading: boolean;
   handleClickButton: () => void;
 }
 
@@ -16,6 +18,7 @@ const Modal = ({
   title,
   children,
   buttonTitle,
+  isButtonLoading,
   handleClickButton,
 }: Props) => {
   if (!isOpen) return null;
@@ -40,10 +43,15 @@ const Modal = ({
         </button>
         <div>{children}</div>
         <button
-          className="w-full bg-blue-6 text-white mt-40 py-16 rounded-lg text-16 font-medium tracking-tight hover:bg-blue-7"
+          disabled={isButtonLoading}
+          className="w-full bg-blue-6 items-center text-white mt-40 h-55 rounded-lg text-16 font-medium tracking-tight hover:bg-blue-7 flex justify-center align-middle"
           onClick={handleClickButton}
         >
-          {buttonTitle}
+          {isButtonLoading ? (
+            <AiOutlineLoading3Quarters className="h-55 text-22 animate-spin text-white" />
+          ) : (
+            <span className="">{buttonTitle}</span>
+          )}
         </button>
       </div>
     </div>

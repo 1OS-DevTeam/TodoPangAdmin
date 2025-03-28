@@ -1,27 +1,30 @@
 import { useState } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { FaHome } from "@react-icons/all-files/fa/FaHome";
 import { FaUser } from "@react-icons/all-files/fa/FaUser";
 import { FaCheck } from "@react-icons/all-files/fa/FaCheck";
 import { FaThList } from "@react-icons/all-files/fa/FaThList";
 
-import ROUTES from "src/constants/routes";
+import ROUTES from "src/common/Routes";
+import { Toast } from "src/components";
 
 const MainLayout = () => {
-  const [isSelected, setIsSelected] = useState(ROUTES.MAIN.KEY);
+  const location = useLocation();
+  const [isSelected, setIsSelected] = useState(location.pathname);
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="w-full bg-white">
         <div className="flex max-w-[120rem] mx-auto items-center justify-between px-30 py-20">
           <Link to="/">
             {/* (+) logo */}
-            <h1 className="text-20 font-bold text-blue-6 tracking-widest">
+            <h1 className="text-20 font-bold text-blue-6 tracking-wide">
               TODOPANG ADMIN
             </h1>
           </Link>
-          <div>
+          {/* <div>
             <p className="text-gray-6 text-14">hyerin@gmail.com</p>
-          </div>
+          </div> */}
         </div>
       </header>
       <div className="flex flex-1 bg-blue-0">
@@ -35,12 +38,12 @@ const MainLayout = () => {
                     <li
                       key={ROUTE.KEY}
                       onClick={() => {
-                        setIsSelected(ROUTE.KEY);
+                        setIsSelected(ROUTE.PATH);
                       }}
                     >
                       <Link
                         to={ROUTE.PATH || "/"}
-                        className={`flex py-20 px-20 mb-10 leading-5 rounded-lg hover:bg-blue-1 ${isSelected === ROUTE.KEY ? "bg-blue-5 text-white hover:bg-blue-5" : "bg-blue-0 text-gray-6"}`}
+                        className={`flex py-20 px-20 mb-10 leading-5 rounded-lg hover:bg-blue-1 ${isSelected === ROUTE.PATH ? "bg-blue-5 text-white hover:bg-blue-5" : "bg-blue-0 text-gray-6"}`}
                       >
                         {ROUTE.KEY === "dashboard" && (
                           <FaHome className="text-18 mr-8" />
@@ -66,6 +69,7 @@ const MainLayout = () => {
           </aside>
           <main className="bg-white flex-[6_6] m-30 rounded-3xl px-30 py-40">
             <Outlet />
+            <Toast />
           </main>
         </div>
       </div>
