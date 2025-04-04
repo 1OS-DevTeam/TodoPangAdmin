@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { RiDeleteBin6Line } from "@react-icons/all-files/ri/RiDeleteBin6Line";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { IoIosAdd } from "@react-icons/all-files/io/IoIosAdd";
 import { AiOutlineLoading3Quarters } from "@react-icons/all-files/ai/AiOutlineLoading3Quarters";
 import { MdCheckBoxOutlineBlank } from "@react-icons/all-files/md/MdCheckBoxOutlineBlank";
 import { MdCheckBox } from "@react-icons/all-files/md/MdCheckBox";
 import { CgArrowsExchange } from "@react-icons/all-files/cg/CgArrowsExchange";
+
 import { Modal, PageTitle, Table } from "src/components";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import services from "src/services";
 import { Constants } from "src/common";
 import ResponseError, { errorHandler } from "src/utils/Error";
 import { useAppStore } from "src/stores";
+
 import AddModal from "./AddModal";
 import StatusChangeModal from "./StatusChangeModal";
 

@@ -4,6 +4,10 @@ import { FaHome } from "@react-icons/all-files/fa/FaHome";
 import { FaUser } from "@react-icons/all-files/fa/FaUser";
 import { FaCheck } from "@react-icons/all-files/fa/FaCheck";
 import { FaThList } from "@react-icons/all-files/fa/FaThList";
+import { IoLogOutOutline } from "@react-icons/all-files/io5/IoLogOutOutline";
+import { signOut } from "firebase/auth";
+import { auth } from "src/firebase";
+import { useNavigate } from "react-router-dom";
 
 import ROUTES from "src/common/Routes";
 import { Toast } from "src/components";
@@ -11,6 +15,17 @@ import { Toast } from "src/components";
 const MainLayout = () => {
   const location = useLocation();
   const [isSelected, setIsSelected] = useState(location.pathname);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      console.log("로그아웃 완료");
+      navigate("/login");
+    } catch (error) {
+      console.error("로그아웃 실패:", error);
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -18,19 +33,29 @@ const MainLayout = () => {
         <div className="flex max-w-[120rem] mx-auto items-center justify-between px-30 py-20">
           <Link to="/">
             {/* (+) logo */}
-            <h1 className="text-20 font-bold text-blue-6 tracking-wide">
-              TODOPANG ADMIN
-            </h1>
+            <h1 className="text-20 font-semibold">TODOPANG ADMIN</h1>
           </Link>
-          {/* <div>
-            <p className="text-gray-6 text-14">hyerin@gmail.com</p>
-          </div> */}
         </div>
       </header>
       <div className="flex flex-1 bg-blue-0">
         <div className="flex flex-1 max-w-[120rem] mx-auto">
           <aside className="flex-[1_6] my-30 ml-30">
-            <h3 className="font-bold text-18 mb-20 mt-10">MENU</h3>
+            <div className="mb-50">
+              <h3 className="font-bold text-blue-6 text-18 mb-20 mt-10 tracking-tight">
+                ACCOUNT
+              </h3>
+              <p className="text-14 mb-8 font-semibold">000000000@gmail.com</p>
+              <button
+                className="text-gray-6 flex items-center tracking-tight"
+                onClick={handleLogout}
+              >
+                <span className="text-14 leading-5">로그아웃</span>
+                <IoLogOutOutline className="text-20 ml-5" />
+              </button>
+            </div>
+            <h3 className="text-blue-6 font-bold text-18 mb-20 mt-10 tracking-tight">
+              MENU
+            </h3>
             <nav>
               <ul>
                 {Object.values(ROUTES).map((ROUTE) => {
