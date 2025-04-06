@@ -50,7 +50,7 @@ const MainLayout = () => {
               <h3 className="font-bold text-blue-6 text-18 mb-20 mt-10 tracking-tight">
                 ACCOUNT
               </h3>
-              <p className="text-14 mb-8 font-semibold">000000000@gmail.com</p>
+              {/* <p className="text-14 mb-8 font-semibold">000000000@gmail.com</p> */}
               <button
                 className="text-gray-6 flex items-center tracking-tight"
                 onClick={handleLogout}
