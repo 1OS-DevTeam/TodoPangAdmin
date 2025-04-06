@@ -6,13 +6,18 @@ import services from "src/services";
 import { useAppStore } from "src/stores";
 import ResponseError, { errorHandler } from "src/utils/Error";
 
-const AddModal = ({ isOpen, onClose }) => {
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const AddModal = ({ isOpen, onClose }: Props) => {
   const queryClient = useQueryClient();
   const { setToastState } = useAppStore();
   const [isAddLoading, setIsAddLoading] = useState(false);
   const [categories, setCategories] = useState<string[]>([""]);
 
-  const handleAddTodo = (e) => {
+  const handleAddTodo = (e: any) => {
     e.preventDefault();
     setCategories([...categories, ""]); // Add a new empty input
   };

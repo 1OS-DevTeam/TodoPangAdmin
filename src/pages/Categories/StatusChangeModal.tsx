@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { FaCaretDown } from "@react-icons/all-files/fa/FaCaretDown";
 import Modal from "src/components/Modal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,7 +12,14 @@ interface Category {
   categoryStatus: 1 | 2 | 3;
   categoryTitle: string;
 }
-const StatusChangeModal = ({ isOpen, onClose, selectedData }) => {
+
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+  selectedData: Category[];
+}
+
+const StatusChangeModal = ({ isOpen, onClose, selectedData }: Props) => {
   const queryClient = useQueryClient();
   const { setToastState } = useAppStore();
   const [isAddLoading, setIsAddLoading] = useState(false);
@@ -101,7 +107,11 @@ const StatusChangeModal = ({ isOpen, onClose, selectedData }) => {
             <p
               className={`${selected.categoryStatus === 1 ? "bg-yellow-0 text-yellow-6" : selected.categoryStatus === 2 ? "bg-blue-0 text-blue-6" : "bg-gray-1 text-gray-6"} inline-block px-6 py-2 rounded text-14`}
             >
-              {Constants.CATEGORY_STATUS[selected.categoryStatus]}
+              {
+                Constants.CATEGORY_STATUS[
+                  selected.categoryStatus as keyof typeof Constants.CATEGORY_STATUS
+                ]
+              }
             </p>
           </div>
         ))}
@@ -126,10 +136,16 @@ const StatusChangeModal = ({ isOpen, onClose, selectedData }) => {
         {isSelectOpen && (
           <ul className="absolute top-full left-0 w-full bg-white border border-gray-3 rounded-md shadow-md mt-1 z-10 max-h-220 overflow-y-auto">
             {Object.entries(Constants.CATEGORY_STATUS)
-              .map(([key, value]) => ({
-                key: Number(key),
-                status: value,
-              }))
+              .map(
+                ([key, value]) =>
+                  ({
+                    key: Number(key),
+                    status: value,
+                  }) as {
+                    key: 1 | 2 | 3;
+                    status: string;
+                  }
+              )
               .map((item) => (
                 <li
                   key={item.key}

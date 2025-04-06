@@ -8,7 +8,7 @@ interface Props {
   children: React.ReactNode;
   title: string;
   buttonTitle: string;
-  isButtonLoading: boolean;
+  isButtonLoading?: boolean;
   handleClickButton: () => void;
 }
 

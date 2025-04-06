@@ -15,12 +15,6 @@ import { useAppStore } from "src/stores";
 import AddModal from "./AddModal";
 import StatusChangeModal from "./StatusChangeModal";
 
-interface UpdatedCategory {
-  updatedCategoryId: number;
-  updatedCategoryStatus: number;
-  updatedCategoryTitle: string;
-}
-
 interface Category {
   categoryId: number;
   categoryStatus: 1 | 2 | 3;
@@ -29,7 +23,7 @@ interface Category {
 
 const Categories = () => {
   const [isUpdateLoading, setIsUpdateLoading] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<Category | null>(null); // for modify title
+  const [selectedItem, setSelectedItem] = useState<any>(null); // for modify title
   const [selectedIds, setSelectedIds] = useState<number[]>([]); // for modify status
   const [isOpen, setIsOpen] = useState(false);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
@@ -195,21 +189,10 @@ const Categories = () => {
                 );
               },
             },
-            // {
-            //   key: "actions",
-            //   label: "",
-            //   render: (_, row) => (
-            //     <div>
-            //       <button onClick={() => handleDelete(row)}>
-            //         <RiDeleteBin6Line className="text-gray-5 text-xl hover:text-dark-6" />
-            //       </button>
-            //     </div>
-            //   ),
-            // },
           ]}
           data={
             data?.sort(
-              (a, b) => a.categoryStatus - b.categoryStatus
+              (a: any, b: any) => a.categoryStatus - b.categoryStatus
             ) as Category[]
           }
         />
@@ -250,7 +233,7 @@ const Categories = () => {
             className="p-16 border-solid border-1 w-full rounded border-gray-3"
             placeholder="카테고리명을 작성해주세요."
             onChange={(e) => {
-              setSelectedItem((prev) => ({
+              setSelectedItem((prev: any) => ({
                 ...prev,
                 categoryTitle: e.target.value,
               }));
@@ -265,7 +248,7 @@ const Categories = () => {
         }}
       />
       <StatusChangeModal
-        selectedData={data?.filter((item) =>
+        selectedData={data?.filter((item: any) =>
           selectedIds.includes(item.categoryId)
         )}
         isOpen={isStatusModalOpen}
@@ -273,16 +256,6 @@ const Categories = () => {
           setIsStatusModalOpen(false);
         }}
       />
-      {/* <Modal
-        isOpen={isStatusModalOpen}
-        title="상태 변경"
-        onClose={() => {
-          setIsStatusModalOpen(false);
-        }}
-        buttonTitle="변경하기"
-      >
-        <div>{}</div>
-      </Modal> */}
     </div>
   );
 };

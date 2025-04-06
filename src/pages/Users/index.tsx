@@ -1,12 +1,10 @@
 import { FaCheckCircle } from "@react-icons/all-files/fa/FaCheckCircle";
-import { RiDeleteBin6Line } from "@react-icons/all-files/ri/RiDeleteBin6Line";
+// import { RiDeleteBin6Line } from "@react-icons/all-files/ri/RiDeleteBin6Line";
 import { Footer } from "src/components";
 
 import { PageTitle, Table } from "src/components";
 
 const Users = () => {
-  const handleDelete = (id: string) => {};
-
   return (
     <div className="relative h-full">
       <PageTitle title="사용자 목록" count={DATA.length} />
@@ -29,11 +27,11 @@ const Users = () => {
           {
             key: "actions",
             label: "",
-            render: (_, row) => (
-              <button onClick={() => handleDelete(row.id)}>
-                <RiDeleteBin6Line className="text-gray-6 text-xl hover:text-red-5" />
-              </button>
-            ),
+            // render: (_, row) => (
+            //   <button onClick={() => {}}>
+            //     <RiDeleteBin6Line className="text-gray-6 text-xl hover:text-red-5" />
+            //   </button>
+            // ),
           },
         ]}
         data={DATA}

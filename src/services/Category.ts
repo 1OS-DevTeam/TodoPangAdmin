@@ -1,12 +1,6 @@
 import axios from "axios";
 import { Config } from "src/common";
 
-interface UpdatedCategory {
-  updatedCategoryId: number;
-  updatedCategoryStatus: number;
-  updatedCategoryTitle: string;
-}
-
 interface Category {
   categoryId: number;
   categoryStatus: 1 | 2 | 3;

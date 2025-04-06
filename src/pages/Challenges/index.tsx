@@ -6,8 +6,8 @@ import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { Modal, PageTitle, Table, Footer } from "src/components";
 
 const Challenges = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
+  // const [isOpen, setIsOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<any>(null);
   const [selected, setSelected] = useState("운동");
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
@@ -30,7 +30,7 @@ const Challenges = () => {
                 className="flex w-full text-start cursor-pointer"
                 onClick={() => {
                   setSelectedRow(row);
-                  setIsOpen((prev) => !prev);
+                  // setIsOpen((prev) => !prev);
                 }}
               >
                 <p className="text-blue-6 font-medium">{row.name}</p>
@@ -66,12 +66,12 @@ const Challenges = () => {
           isOpen={!!selectedRow}
           onClose={() => {
             setSelectedRow(null);
-            setIsOpen(false);
+            // setIsOpen(false);
           }}
           handleClickButton={() => {
             alert("hi");
             setSelectedRow(null);
-            setIsOpen(false);
+            // setIsOpen(false);
           }}
         >
           <div className="max-h-400">

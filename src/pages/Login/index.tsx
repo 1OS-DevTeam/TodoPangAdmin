@@ -17,7 +17,7 @@ const Login = () => {
     }
   };
 
-  const serverLogin = async (user) => {
+  const serverLogin = async (user: any) => {
     try {
       console.log("소셜로그인 정보: ", user);
 
