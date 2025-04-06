@@ -1,26 +1,39 @@
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "src/firebase";
 import { useNavigate } from "react-router-dom";
+import Auth from "src/services/Auth";
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const socialLogin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      const user = result.user;
+      const user = result?.user;
 
-      //   const allowedAdmins = ["admin@example.com"];
-      //   if (!allowedAdmins.includes(user.email || "")) {
-      //     alert("관리자 권한이 없습니다.");
-      //     return;
-      //   }
+      return user;
+    } catch (error) {
+      console.error("소셜 로그인 실패:", error);
+    }
+  };
 
-      console.log("로그인 성공:", user);
+  const serverLogin = async (user) => {
+    try {
+      console.log("소셜로그인 정보: ", user);
+
+      localStorage.setItem("accessToken", user.accessToken);
+      await Auth.login(user.accessToken);
+      console.log("/auth/login 성공이당!");
+
       navigate("/");
     } catch (error) {
-      console.error("로그인 실패:", error);
+      console.error("서버 로그인 실패:", error);
     }
+  };
+
+  const handleLogin = async () => {
+    const socialData = await socialLogin();
+    if (socialData) await serverLogin(socialData);
   };
 
   return (

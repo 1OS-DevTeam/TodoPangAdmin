@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 import ROUTES from "src/common/Routes";
 import { Toast } from "src/components";
+import Auth from "src/services/Auth";
 
 const MainLayout = () => {
   const location = useLocation();
@@ -20,6 +21,11 @@ const MainLayout = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken) await Auth.logout(accessToken);
+      localStorage.removeItem("accessToken");
+
       console.log("로그아웃 완료");
       navigate("/login");
     } catch (error) {

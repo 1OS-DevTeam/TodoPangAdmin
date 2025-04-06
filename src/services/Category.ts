@@ -8,7 +8,7 @@ interface UpdatedCategory {
 }
 
 const fetchCategories = async () => {
-  const res = await axios.post(`${Config.SERVER_URL}/admin/category/fetch`, {
+  const res = await axios.post(`${Config.SERVER_URL}/category/fetch`, {
     adminId: "user_1",
   });
 
@@ -16,7 +16,7 @@ const fetchCategories = async () => {
 };
 
 const addCategory = async ({ newCategories }: { newCategories: string[] }) => {
-  const res = await axios.post(`${Config.SERVER_URL}/admin/category/add`, {
+  const res = await axios.post(`${Config.SERVER_URL}/category/add`, {
     adminId: "user_1",
     newCategories,
   });
@@ -29,7 +29,7 @@ const updateCategory = async ({
 }: {
   updatedCategories: UpdatedCategory[];
 }) => {
-  const res = await axios.post(`${Config.SERVER_URL}/admin/category/update`, {
+  const res = await axios.post(`${Config.SERVER_URL}/category/update`, {
     adminId: "user_1",
     updatedCategories,
   });
