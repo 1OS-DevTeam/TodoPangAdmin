@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import MainLayout from "src/layouts/MainLayout";
 import ROUTES from "src/common/Routes";
@@ -28,6 +28,8 @@ const Router = () => {
           <Route path={ROUTES.CATEGORIES.PATH} element={<Categories />} />
           <Route path={ROUTES.CHALLENGES.PATH} element={<Challenges />} />
         </Route>
+
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   );
