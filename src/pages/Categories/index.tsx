@@ -47,13 +47,7 @@ const Categories = () => {
       setIsUpdateLoading(true);
 
       return services.Category.updateCategory({
-        updatedCategories: [
-          {
-            updatedCategoryId: category.categoryId,
-            updatedCategoryStatus: category.categoryStatus,
-            updatedCategoryTitle: category.categoryTitle,
-          },
-        ],
+        updatedCategories: [category],
       });
     },
     onSuccess: async () => {
@@ -83,43 +77,6 @@ const Categories = () => {
     },
   });
 
-  const { mutate: deleteCategory } = useMutation({
-    mutationFn: ({ categories }: { categories: UpdatedCategory[] }) => {
-      setIsUpdateLoading(true);
-
-      // console.log(categories);
-
-      return services.Category.updateCategory({
-        updatedCategories: categories,
-      });
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["categoryList"],
-      });
-      setIsOpen(false);
-      setToastState({
-        isOpen: true,
-        type: "success",
-        title: "삭제 완료",
-        message: "성공적으로 삭제되었습니다.",
-      });
-    },
-    onError: (e) => {
-      setToastState({
-        isOpen: true,
-        type: "error",
-        title: "삭제 실패",
-        message: "오류가 발생했습니다. 다시 시도해주세요.",
-      });
-      if (e instanceof ResponseError) errorHandler(e);
-      setIsOpen(false);
-    },
-    onSettled: () => {
-      setIsUpdateLoading(false);
-    },
-  });
-
   const handleChangeStatus = () => {
     if (!selectedIds.length) {
       setToastState({
@@ -132,27 +89,6 @@ const Categories = () => {
     }
 
     setIsStatusModalOpen(true);
-  };
-
-  const handleDelete = (row: Category) => {
-    if (row.categoryStatus === 3) {
-      setToastState({
-        isOpen: true,
-        type: "error",
-        title: "삭제 불가",
-        message: "이미 삭제된 카테고리입니다.",
-      });
-    } else {
-      deleteCategory({
-        categories: [
-          {
-            updatedCategoryId: row.categoryId,
-            updatedCategoryStatus: 3,
-            updatedCategoryTitle: row.categoryTitle,
-          },
-        ],
-      });
-    }
   };
 
   return (

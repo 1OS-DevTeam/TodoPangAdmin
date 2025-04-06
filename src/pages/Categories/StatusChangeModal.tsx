@@ -8,36 +8,27 @@ import { useAppStore } from "src/stores";
 import ResponseError, { errorHandler } from "src/utils/Error";
 import { Constants } from "src/common";
 
+interface Category {
+  categoryId: number;
+  categoryStatus: 1 | 2 | 3;
+  categoryTitle: string;
+}
 const StatusChangeModal = ({ isOpen, onClose, selectedData }) => {
   const queryClient = useQueryClient();
   const { setToastState } = useAppStore();
   const [isAddLoading, setIsAddLoading] = useState(false);
-  const [categories, setCategories] = useState<string[]>([""]);
   const [selected, setSelected] = useState<{
-    key: number;
+    key: 1 | 2 | 3;
     status: string;
   } | null>(null);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
-  console.log(selectedData);
-
-  const handleAddTodo = (e) => {
-    e.preventDefault();
-    setCategories([...categories, ""]); // Add a new empty input
-  };
-
-  const handleTodoChange = (index: number, value: string) => {
-    const updated = [...categories];
-    updated[index] = value;
-    setCategories(updated);
-  };
-
-  const { mutate: addCategories } = useMutation({
-    mutationFn: (categoryList: string[]) => {
+  const { mutate: updateCategories } = useMutation({
+    mutationFn: (categoryList: Category[]) => {
       setIsAddLoading(true);
 
-      return services.Category.addCategory({
-        newCategories: categoryList,
+      return services.Category.updateCategory({
+        updatedCategories: categoryList,
       });
     },
     onSuccess: async () => {
@@ -47,7 +38,7 @@ const StatusChangeModal = ({ isOpen, onClose, selectedData }) => {
       setToastState({
         isOpen: true,
         type: "success",
-        title: "추가 완료",
+        title: "상태 변경 완료",
         message: "성공적으로 반영되었습니다.",
       });
     },
@@ -55,38 +46,38 @@ const StatusChangeModal = ({ isOpen, onClose, selectedData }) => {
       setToastState({
         isOpen: true,
         type: "error",
-        title: "수정 실패",
+        title: "상태 변경 실패",
         message: "오류가 발생했습니다. 다시 시도해주세요.",
       });
       if (e instanceof ResponseError) errorHandler(e);
     },
     onSettled: () => {
       setIsAddLoading(false);
-      setCategories([""]);
+      setSelected(null);
       onClose();
     },
   });
 
   const handleSubmit = () => {
-    const submitList = categories.filter((t) => t.trim() !== "");
+    const updatedList: Category[] = [];
 
-    if (!submitList.length) {
-      setToastState({
-        isOpen: true,
-        type: "error",
-        title: "추가 실패",
-        message: "카테고리명을 입력해주세요.",
+    if (selected) {
+      selectedData.forEach((item) => {
+        updatedList.push({
+          categoryId: item.categoryId,
+          categoryStatus: selected.key,
+          categoryTitle: item.categoryTitle,
+        });
       });
-    } else {
-      addCategories(submitList);
     }
+
+    updateCategories(updatedList);
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={() => {
-        setCategories([""]);
         onClose();
       }}
       title="상태 변경하기"
@@ -97,7 +88,10 @@ const StatusChangeModal = ({ isOpen, onClose, selectedData }) => {
       <div className="mb-40">
         <p className="mb-10 text-gray-6 tracking-tight">선택한 카테고리</p>
         {selectedData?.map((selected, index) => (
-          <div className="flex px-10 py-7 items-center justify-between bg-gray-1">
+          <div
+            key={selected.categoryId}
+            className="flex px-10 py-7 items-center justify-between bg-gray-1"
+          >
             <div className="flex items-center">
               <p className="font-medium mr-4">{index + 1}.</p>
               <p className="tracking-tight font-normal mr-10">

@@ -7,19 +7,40 @@ interface UpdatedCategory {
   updatedCategoryTitle: string;
 }
 
+interface Category {
+  categoryId: number;
+  categoryStatus: 1 | 2 | 3;
+  categoryTitle: string;
+}
+
 const fetchCategories = async () => {
-  const res = await axios.post(`${Config.SERVER_URL}/category/fetch`, {
-    adminId: "user_1",
-  });
+  const accessToken = localStorage.getItem("accessToken");
+  const res = await axios.post(
+    `${Config.SERVER_URL}/category/fetch`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
 
   return res?.data?.data;
 };
 
 const addCategory = async ({ newCategories }: { newCategories: string[] }) => {
-  const res = await axios.post(`${Config.SERVER_URL}/category/add`, {
-    adminId: "user_1",
-    newCategories,
-  });
+  const accessToken = localStorage.getItem("accessToken");
+  const res = await axios.post(
+    `${Config.SERVER_URL}/category/add`,
+    {
+      newCategories,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
 
   return res;
 };
@@ -27,12 +48,20 @@ const addCategory = async ({ newCategories }: { newCategories: string[] }) => {
 const updateCategory = async ({
   updatedCategories,
 }: {
-  updatedCategories: UpdatedCategory[];
+  updatedCategories: Category[];
 }) => {
-  const res = await axios.post(`${Config.SERVER_URL}/category/update`, {
-    adminId: "user_1",
-    updatedCategories,
-  });
+  const accessToken = localStorage.getItem("accessToken");
+  const res = await axios.post(
+    `${Config.SERVER_URL}/category/update`,
+    {
+      updatedCategories,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
 
   return res;
 };
