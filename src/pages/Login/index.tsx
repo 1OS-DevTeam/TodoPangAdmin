@@ -2,29 +2,35 @@ import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "src/firebase";
 import { useNavigate } from "react-router-dom";
 import Auth from "src/services/Auth";
+import { useAppStore } from "src/stores";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setMe } = useAppStore();
 
   const socialLogin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result?.user;
 
+      setMe({
+        name: user.displayName || "",
+        email: user.email || "",
+      });
       return user;
     } catch (error) {
       console.error("소셜 로그인 실패:", error);
+      return;
     }
   };
 
   const serverLogin = async (user: any) => {
     try {
       console.log("소셜로그인 정보: ", user);
-
-      localStorage.setItem("accessToken", user.accessToken);
       await Auth.login(user.accessToken);
-      console.log("/auth/login 성공이당!");
 
+      console.log("/auth/login 성공이당!");
+      localStorage.setItem("accessToken", user.accessToken);
       navigate("/");
     } catch (error) {
       console.error("서버 로그인 실패:", error);
