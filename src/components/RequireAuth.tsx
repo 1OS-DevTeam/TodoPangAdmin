@@ -1,29 +1,38 @@
-import { useEffect } from "react";
+import { useEffect, useState, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
+import { onIdTokenChanged } from "firebase/auth";
 import { auth } from "src/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { useState } from "react";
 
-const RequireAuth = ({ children }: { children: any }) => {
+interface RequireAuthProps {
+  children: ReactNode;
+}
+
+const RequireAuth = ({ children }: RequireAuthProps) => {
   const navigate = useNavigate();
-  const [checking, setChecking] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onIdTokenChanged(auth, async (user) => {
       if (user) {
+        const currentToken = await user.getIdToken();
+        const storedToken = localStorage.getItem("accessToken");
+
+        if (storedToken !== currentToken) {
+          localStorage.setItem("accessToken", currentToken); // 토큰 동기화
+        }
+
         setIsAuthenticated(true);
       } else {
+        localStorage.removeItem("accessToken");
+        setIsAuthenticated(false);
         navigate("/login");
       }
-      setChecking(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [navigate]);
 
-  if (checking) return <div>인증 확인 중...</div>;
-  return isAuthenticated ? children : null;
+  return isAuthenticated ? <>{children}</> : null;
 };
 
 export default RequireAuth;

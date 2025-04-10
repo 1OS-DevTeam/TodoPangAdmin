@@ -88,114 +88,116 @@ const Categories = () => {
   return (
     <div className="relative h-full">
       <PageTitle title="카테고리 목록" count={data?.length || 0} />
-      <div className="flex justify-end">
-        <button
-          className="flex border-[1px] border-blue-6 pr-16 pl-8 mr-12 py-6 rounded hover:bg-blue-0"
-          onClick={handleChangeStatus}
-        >
-          <CgArrowsExchange className="text-blue-6 text-22 mr-4" />
-          <span className="text-blue-6 text-16 font-medium">상태 변경</span>
-        </button>
-        <button
-          className="flex bg-blue-6 pr-16 pl-8 py-6 rounded hover:bg-blue-8"
-          onClick={() => {
-            setIsAddModalOpen(true);
-          }}
-        >
-          <IoIosAdd className="text-white text-22" />
-          <span className="text-white text-16">카테고리 추가</span>
-        </button>
-      </div>
       {isLoading || isFetching ? (
         <div className="flex justify-center items-center h-[400px]">
           <AiOutlineLoading3Quarters className="text-40 animate-spin text-blue-6" />
         </div>
       ) : (
-        <Table
-          columnRatios={[0.5, 0.5, 3, 6]}
-          columns={[
-            {
-              key: "checkbox",
-              label: "",
-              render: (_, row) => (
-                <button
-                  className="flex w-full text-start cursor-pointer"
-                  onClick={() => {
-                    if (selectedIds.includes(row.categoryId)) {
-                      setSelectedIds(
-                        selectedIds.filter((id) => id !== row.categoryId)
-                      );
-                    } else {
-                      setSelectedIds([...selectedIds, row.categoryId]);
-                    }
-                  }}
-                >
-                  {selectedIds.includes(row.categoryId) ? (
-                    <MdCheckBox className="text-blue-6 text-24" />
-                  ) : (
-                    <MdCheckBoxOutlineBlank className="text-gray-3 text-24" />
-                  )}
-                </button>
-              ),
-            },
-            {
-              key: "categoryId",
-              label: "ID",
-            },
-            {
-              key: "categoryTitle",
-              label: "이름",
-              render: (_, row) => (
-                <button
-                  className="flex w-full text-start cursor-pointer"
-                  onClick={() => {
-                    if (row.categoryStatus === 3) {
-                      setToastState({
-                        isOpen: true,
-                        type: "error",
-                        title: "수정 불가",
-                        message: "이미 삭제된 카테고리입니다.",
-                      });
-                      return;
-                    }
-                    setSelectedItem(row);
-                    setIsOpen((prev) => !prev);
-                  }}
-                >
-                  <p className="text-blue-6 font-medium underline underline-offset-2">
-                    {row.categoryTitle}
-                  </p>
-                </button>
-              ),
-            },
-            {
-              key: "categoryStatus",
-              label: "상태",
-              render: (_, row) => {
-                return Constants.CATEGORY_STATUS?.[
-                  row.categoryStatus as keyof typeof Constants.CATEGORY_STATUS
-                ] ? (
-                  <p
-                    className={`${row.categoryStatus === 1 ? "bg-yellow-1 text-yellow-7" : row.categoryStatus === 2 ? "bg-blue-0 text-blue-6" : "bg-gray-2 text-gray-6"} inline-block px-8 py-3 rounded text-14`}
+        <>
+          <div className="flex justify-end">
+            <button
+              className="flex border-[1px] border-blue-6 pr-16 pl-8 mr-12 py-6 rounded hover:bg-blue-0"
+              onClick={handleChangeStatus}
+            >
+              <CgArrowsExchange className="text-blue-6 text-22 mr-4" />
+              <span className="text-blue-6 text-16 font-medium">상태 변경</span>
+            </button>
+            <button
+              className="flex bg-blue-6 pr-16 pl-8 py-6 rounded hover:bg-blue-8"
+              onClick={() => {
+                setIsAddModalOpen(true);
+              }}
+            >
+              <IoIosAdd className="text-white text-22" />
+              <span className="text-white text-16">카테고리 추가</span>
+            </button>
+          </div>
+          <Table
+            columnRatios={[0.5, 0.5, 3, 6]}
+            columns={[
+              {
+                key: "checkbox",
+                label: "",
+                render: (_, row) => (
+                  <button
+                    className="flex w-full text-start cursor-pointer"
+                    onClick={() => {
+                      if (selectedIds.includes(row.categoryId)) {
+                        setSelectedIds(
+                          selectedIds.filter((id) => id !== row.categoryId)
+                        );
+                      } else {
+                        setSelectedIds([...selectedIds, row.categoryId]);
+                      }
+                    }}
                   >
-                    {
-                      Constants.CATEGORY_STATUS?.[
-                        row.categoryStatus as keyof typeof Constants.CATEGORY_STATUS
-                      ]
-                    }
-                  </p>
-                ) : (
-                  <p className="px-5 text-gray-5">-</p>
-                );
+                    {selectedIds.includes(row.categoryId) ? (
+                      <MdCheckBox className="text-blue-6 text-24" />
+                    ) : (
+                      <MdCheckBoxOutlineBlank className="text-gray-3 text-24" />
+                    )}
+                  </button>
+                ),
               },
-            },
-          ]}
-          data={
-            data?.sort(
-              (a: any, b: any) => a.categoryStatus - b.categoryStatus
-            ) as Category[]
-          }
-        />
+              {
+                key: "categoryId",
+                label: "ID",
+              },
+              {
+                key: "categoryTitle",
+                label: "이름",
+                render: (_, row) => (
+                  <button
+                    className="flex w-full text-start cursor-pointer"
+                    onClick={() => {
+                      if (row.categoryStatus === 3) {
+                        setToastState({
+                          isOpen: true,
+                          type: "error",
+                          title: "수정 불가",
+                          message: "이미 삭제된 카테고리입니다.",
+                        });
+                        return;
+                      }
+                      setSelectedItem(row);
+                      setIsOpen((prev) => !prev);
+                    }}
+                  >
+                    <p className="text-blue-6 font-medium underline underline-offset-2">
+                      {row.categoryTitle}
+                    </p>
+                  </button>
+                ),
+              },
+              {
+                key: "categoryStatus",
+                label: "상태",
+                render: (_, row) => {
+                  return Constants.CATEGORY_STATUS?.[
+                    row.categoryStatus as keyof typeof Constants.CATEGORY_STATUS
+                  ] ? (
+                    <p
+                      className={`${row.categoryStatus === 1 ? "bg-yellow-1 text-yellow-7" : row.categoryStatus === 2 ? "bg-blue-0 text-blue-6" : "bg-gray-2 text-gray-6"} inline-block px-8 py-3 rounded text-14`}
+                    >
+                      {
+                        Constants.CATEGORY_STATUS?.[
+                          row.categoryStatus as keyof typeof Constants.CATEGORY_STATUS
+                        ]
+                      }
+                    </p>
+                  ) : (
+                    <p className="px-5 text-gray-5">-</p>
+                  );
+                },
+              },
+            ]}
+            data={
+              data?.sort(
+                (a: any, b: any) => a.categoryStatus - b.categoryStatus
+              ) as Category[]
+            }
+          />
+        </>
       )}
       <Modal
         title="카테고리 수정"
