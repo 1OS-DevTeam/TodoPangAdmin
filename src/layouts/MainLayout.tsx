@@ -11,7 +11,6 @@ import { auth } from "src/firebase";
 import { useNavigate } from "react-router-dom";
 
 import ROUTES from "src/common/Routes";
-import { Images } from "src/common";
 import { Toast } from "src/components";
 import Auth from "src/services/Auth";
 import { useAppStore } from "src/stores";
@@ -42,8 +41,16 @@ const MainLayout = () => {
     <div className="flex flex-col min-h-screen">
       <header className="w-full bg-white">
         <div className="flex max-w-[120rem] mx-auto items-center px-30 py-20">
-          <img src={Images.LogoIcon} className="w-35 h-35 mr-12" />
-          <img src={Images.LogoTitle} className="w-75 mr-12" />
+          <img
+            src="/images/logo-icon.png"
+            alt="Todopang Logo Icon"
+            className="w-35 h-35 mr-12"
+          />
+          <img
+            src="/images/logo-title.png"
+            alt="Todopang Logo Title"
+            className="w-75 mr-12"
+          />
         </div>
       </header>
       <div className="flex flex-1 bg-blue-0">
