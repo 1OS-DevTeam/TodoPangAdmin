@@ -1,6 +1,7 @@
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "src/firebase";
 import { useNavigate } from "react-router-dom";
+import { FcGoogle } from "@react-icons/all-files/fc/FcGoogle";
 import Auth from "src/services/Auth";
 import { useAppStore } from "src/stores";
 
@@ -43,10 +44,34 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <button className="bg-blue-6 py-12 text-white" onClick={handleLogin}>
-        Google 로그인
-      </button>
+    <div className="bg-gray-1 flex min-h-screen mx-auto items-center justify-center">
+      <div className="bg-blue-3 w-[460px] h-[400px] rounded-3xl mr-30 flex justify-center items-center">
+        <img src="images/logo-icon-todo.png" className="w-[240px] mb-20" />
+      </div>
+      <div className="bg-white w-[460px] h-[400px] rounded-3xl flex flex-col justify-center items-center">
+        <div className="mb-50 text-center">
+          <h1 className="text-24 font-bold tracking-tighter mb-16">
+            투두팡 어드민 로그인
+          </h1>
+          <p className="text-gray-6 font-medium text-16 tracking-tight">
+            구글 계정으로 로그인해주세요.
+          </p>
+        </div>
+        <button
+          className="rounded-lg bg-blue-0 py-16 hover:bg-blue-1 hover:text-white border-gray-3 w-[340px] flex items-center justify-center"
+          onClick={handleLogin}
+        >
+          <FcGoogle className="text-22 mr-12" />
+          <span className="text-16 text-blue-7 tracking-tight">
+            Google 로그인
+          </span>
+        </button>
+        <p className="mt-50 tracking-tight text-gray-6 text-center">
+          관리자를 통해 승인된 사람에 한해
+          <br />
+          어드민 페이지 로그인이 가능합니다.
+        </p>
+      </div>
     </div>
   );
 };
