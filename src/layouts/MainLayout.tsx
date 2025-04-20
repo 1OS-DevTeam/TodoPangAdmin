@@ -43,12 +43,12 @@ const MainLayout = () => {
         {/* <div className="flex max-w-[120rem] mx-auto items-center px-30 py-20"> */}
         <div className="flex items-center px-30">
           <img
-            src="/images/logo-icon-pencil.png"
+            src="images/logo-icon-pencil.png"
             alt="Todopang Logo Icon"
             className="w-35 h-35 mr-12"
           />
           <img
-            src="/images/logo-title.png"
+            src="images/logo-title.png"
             alt="Todopang Logo Title"
             className="w-75 mr-12"
           />
