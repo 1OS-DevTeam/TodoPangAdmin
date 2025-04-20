@@ -39,10 +39,11 @@ const MainLayout = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="w-full bg-white">
-        <div className="flex max-w-[120rem] mx-auto items-center px-30 py-20">
+      <header className="flex mx-auto items-center max-w-[120rem] justify-between w-full bg-white">
+        {/* <div className="flex max-w-[120rem] mx-auto items-center px-30 py-20"> */}
+        <div className="flex items-center px-30">
           <img
-            src="/images/logo-icon.png"
+            src="/images/logo-icon-pencil.png"
             alt="Todopang Logo Icon"
             className="w-35 h-35 mr-12"
           />
@@ -52,31 +53,32 @@ const MainLayout = () => {
             className="w-75 mr-12"
           />
         </div>
+        <div className="flex items-center p-16">
+          <div className="">
+            <p className="text-12 font-normal text-gray-6 tracking-tight leading-5">
+              {me.email}
+            </p>
+            <button
+              className="text-gray-6 flex items-center justify-end w-full"
+              onClick={handleLogout}
+            >
+              <span className="text-12 leading-5">로그아웃</span>
+              <IoLogOutOutline className="text-18 ml-3" />
+            </button>
+            {/* <p className="text-14 font-medium text-gray-6 leading-5">
+              {me.name}
+            </p> */}
+          </div>
+          <FaUserCircle className="text-35 text-gray-5 ml-12 mr-12" />
+        </div>
       </header>
       <div className="flex flex-1 bg-blue-0">
         <div className="flex flex-1 max-w-[120rem] mx-auto">
           <aside className="flex-[1_6] my-30 ml-30">
-            <div className="mt-30 pb-40 mb-40 border-b-1 border-blue-1">
-              <div className="flex items-center mb-8">
-                <FaUserCircle className="text-40 text-blue-2 mr-12" />
-                <div>
-                  <p className="text-14 font-medium text-blue-7">{me.name}</p>
-                  <p className="text-14 font-normal text-blue-5 tracking-tight">
-                    {me.email}
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <button
-                  className="text-gray-6 flex items-center"
-                  onClick={handleLogout}
-                >
-                  <span className="text-13 leading-5">로그아웃</span>
-                  <IoLogOutOutline className="text-18 ml-3" />
-                </button>
-              </div>
-            </div>
             <nav>
+              <p className="mb-24 text-14 font-bold text-gray-7 tracking-tight">
+                MENU
+              </p>
               <ul>
                 {Object.values(ROUTES).map((ROUTE) => {
                   return (
@@ -111,6 +113,15 @@ const MainLayout = () => {
                 })}
               </ul>
             </nav>
+            {/* <div className="flex justify-end mt-40">
+              <button
+                className="text-gray-6 flex items-center"
+                onClick={handleLogout}
+              >
+                <span className="text-13 leading-5">로그아웃</span>
+                <IoLogOutOutline className="text-18 ml-3" />
+              </button>
+            </div> */}
           </aside>
           <main className="bg-white flex-[6_6] m-30 rounded-3xl px-30 py-40">
             <Outlet />

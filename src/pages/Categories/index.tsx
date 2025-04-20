@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { IoIosAdd } from "@react-icons/all-files/io/IoIosAdd";
+import { FaCaretDown } from "@react-icons/all-files/fa/FaCaretDown";
 import { AiOutlineLoading3Quarters } from "@react-icons/all-files/ai/AiOutlineLoading3Quarters";
 import { MdCheckBoxOutlineBlank } from "@react-icons/all-files/md/MdCheckBoxOutlineBlank";
 import { MdCheckBox } from "@react-icons/all-files/md/MdCheckBox";
@@ -19,17 +20,27 @@ interface Category {
   categoryId: number;
   categoryStatus: 1 | 2 | 3;
   categoryTitle: string;
+  challengesInvolved: number;
+  lastUpdatedBy: string;
+  lastUpdatedAt: string;
 }
 
 const Categories = () => {
+  const queryClient = useQueryClient();
+  const { setToastState } = useAppStore();
+
   const [isUpdateLoading, setIsUpdateLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null); // for modify title
   const [selectedIds, setSelectedIds] = useState<number[]>([]); // for modify status
   const [isOpen, setIsOpen] = useState(false);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const queryClient = useQueryClient();
-  const { setToastState } = useAppStore();
+
+  const [selected, setSelected] = useState<{
+    key: 1 | 2 | 3;
+    status: string;
+  } | null>(null);
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["categoryList"],
@@ -113,7 +124,7 @@ const Categories = () => {
             </button>
           </div>
           <Table
-            columnRatios={[0.5, 0.5, 3, 6]}
+            columnRatios={[0.5, 0.5, 3, 1, 1, 1, 1]}
             columns={[
               {
                 key: "checkbox",
@@ -150,12 +161,12 @@ const Categories = () => {
                   <button
                     className="flex w-full text-start cursor-pointer"
                     onClick={() => {
-                      if (row.categoryStatus === 3) {
+                      if (row.categoryStatus < 1 || row.categoryStatus > 2) {
                         setToastState({
                           isOpen: true,
                           type: "error",
                           title: "수정 불가",
-                          message: "이미 삭제된 카테고리입니다.",
+                          message: "수정이 불가능한 상태입니다.",
                         });
                         return;
                       }
@@ -190,10 +201,46 @@ const Categories = () => {
                   );
                 },
               },
+              {
+                key: "challengesInvolved",
+                label: "포함된 위시",
+                render: (_, row) => {
+                  return (
+                    <p className="text-gray-6 tracking-tight">
+                      {row?.challengesInvolved || 0}개
+                    </p>
+                  );
+                },
+              },
+              {
+                key: "lastUpdatedBy",
+                label: "마지막 수정인",
+                render: (_, row) => {
+                  return (
+                    <p className="text-gray-6 tracking-tight">
+                      {row?.lastUpdatedBy || ""}
+                    </p>
+                  );
+                },
+              },
+              {
+                key: "lastUpdatedAt",
+                label: "마지막 수정일",
+                render: (_, row) => {
+                  const original = row?.lastUpdatedAt || "";
+                  const dateOnly = original.split("T")[0];
+
+                  return (
+                    <p className="text-gray-6 tracking-tight">{dateOnly}</p>
+                  );
+                },
+              },
             ]}
             data={
               data?.sort(
-                (a: any, b: any) => a.categoryStatus - b.categoryStatus
+                (a: Category, b: Category) =>
+                  new Date(b.lastUpdatedAt).valueOf() -
+                  new Date(a.lastUpdatedAt).valueOf()
               ) as Category[]
             }
           />
@@ -205,6 +252,7 @@ const Categories = () => {
         isOpen={isOpen}
         onClose={() => {
           setIsOpen(false);
+          setSelectedItem(null);
         }}
         isButtonLoading={isUpdateLoading}
         handleClickButton={() => {
@@ -228,7 +276,7 @@ const Categories = () => {
             className="p-16 cursor-not-allowed border-solid border-1 w-full rounded border-gray-3"
           />
         </div>
-        <div>
+        <div className="mb-30">
           <label className="flex text-14 text-gray-6 mb-8">이름</label>
           <input
             defaultValue={selectedItem?.categoryTitle}
@@ -241,6 +289,60 @@ const Categories = () => {
               }));
             }}
           />
+        </div>
+        <div className="flex flex-col relative">
+          <label htmlFor="category" className="mb-5 text-gray-6 tracking-tight">
+            변경할 상태
+          </label>
+          <button
+            className="w-full px-16 py-12 border border-gray-3 rounded-md text-left focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-5  bg-white relative"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsSelectOpen(!isSelectOpen);
+            }}
+          >
+            <span>
+              {!!selected
+                ? selected.status
+                : Constants.CATEGORY_STATUS?.[
+                    selectedItem?.categoryStatus as keyof typeof Constants.CATEGORY_STATUS
+                  ]}
+            </span>
+            <FaCaretDown className="absolute right-16 text-24 top-1/2 -translate-y-1/2 text-gray-4" />
+          </button>
+
+          {isSelectOpen && (
+            <ul className="absolute top-full left-0 w-full bg-white border border-gray-3 rounded-md shadow-md mt-1 z-10 max-h-220 overflow-y-auto">
+              {Object.entries(Constants.CATEGORY_STATUS)
+                .map(
+                  ([key, value]) =>
+                    ({
+                      key: Number(key),
+                      status: value,
+                    }) as {
+                      key: 1 | 2 | 3;
+                      status: string;
+                    }
+                )
+                .map((item) => (
+                  <li
+                    key={item.key}
+                    className="px-16 py-12 cursor-pointer hover:bg-blue-0"
+                    onClick={() => {
+                      setSelected(item);
+                      setSelectedItem((prev: any) => ({
+                        ...prev,
+                        categoryStatus: item.key,
+                      }));
+
+                      setIsSelectOpen(false);
+                    }}
+                  >
+                    {item.status}
+                  </li>
+                ))}
+            </ul>
+          )}
         </div>
       </Modal>
       <AddModal
@@ -256,6 +358,7 @@ const Categories = () => {
         isOpen={isStatusModalOpen}
         onClose={() => {
           setIsStatusModalOpen(false);
+          setSelectedIds([]);
         }}
       />
     </div>

@@ -34,6 +34,7 @@ const Login = () => {
       localStorage.setItem("accessToken", user.accessToken);
       navigate("/");
     } catch (error) {
+      alert("로그인에 실패했습니다.");
       console.error("서버 로그인 실패:", error);
     }
   };
