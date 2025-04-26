@@ -28,10 +28,11 @@ const Login = () => {
   const serverLogin = async (user: any) => {
     try {
       console.log("소셜로그인 정보: ", user);
-      await Auth.login(user.accessToken);
+
+      localStorage.setItem("accessToken", user.accessToken);
+      await Auth.login();
 
       console.log("/auth/login 성공이당!");
-      localStorage.setItem("accessToken", user.accessToken);
       navigate("/");
     } catch (error) {
       alert("로그인에 실패했습니다.");

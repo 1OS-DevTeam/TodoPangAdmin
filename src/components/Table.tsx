@@ -20,7 +20,7 @@ const Table = <T,>({ columns, data, columnRatios }: TableProps<T>) => {
     : Array(columns.length).fill(`${100 / columns.length}%`);
 
   return (
-    <table className="w-full border-collapse mt-30">
+    <table className="w-full border-collapse mt-20">
       <thead>
         <tr className="text-left border-b-1 border-gray-1">
           {columns.map((column, index) => (
@@ -44,7 +44,7 @@ const Table = <T,>({ columns, data, columnRatios }: TableProps<T>) => {
             {columns.map((column, index) => (
               <td
                 key={String(column.key)}
-                className={`py-12 text-gray-7`}
+                className={`py-12 text-gray-6 tracking-tight`}
                 style={{ width: computedWidths[index] }}
               >
                 {column.render

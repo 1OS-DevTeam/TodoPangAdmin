@@ -24,9 +24,7 @@ const MainLayout = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-
-      const accessToken = localStorage.getItem("accessToken");
-      if (accessToken) await Auth.logout(accessToken);
+      await Auth.logout();
       localStorage.removeItem("accessToken");
 
       console.log("로그아웃 완료");

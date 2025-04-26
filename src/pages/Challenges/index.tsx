@@ -1,17 +1,37 @@
-// import { useState } from "react";
-// import { RiDeleteBin6Line } from "@react-icons/all-files/ri/RiDeleteBin6Line";
-// import { FaCaretDown } from "@react-icons/all-files/fa/FaCaretDown";
-// import { IoIosAdd } from "@react-icons/all-files/io/IoIosAdd";
-// import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
-// import { Modal, PageTitle, Table, Footer } from "src/components";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { AiOutlineLoading3Quarters } from "@react-icons/all-files/ai/AiOutlineLoading3Quarters";
+import { IoIosAdd } from "@react-icons/all-files/io/IoIosAdd";
+import { FaCaretDown } from "@react-icons/all-files/fa/FaCaretDown";
+import { Modal, PageTitle, Table, Footer } from "src/components";
+import services from "src/services";
+import { Constants } from "src/common";
+import DetailModal from "./DetailModal";
+import AddModal from "./AddModal";
 
 const Challenges = () => {
-  // const [isOpen, setIsOpen] = useState(false);
-  // const [selectedRow, setSelectedRow] = useState<any>(null);
-  // const [selected, setSelected] = useState("운동");
-  // const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedPage, setSelectedPage] = useState(1);
 
-  return (
+  const {
+    data: challengeList,
+    isLoading,
+    isFetching,
+    isError,
+  } = useQuery({
+    queryKey: ["challengeList", selectedPage],
+    queryFn: () =>
+      services.Challenge.fetchChallenges({
+        page: selectedPage,
+        pageSize: 10,
+      }),
+  });
+
+  console.log(challengeList);
+
+  return isError ? (
     <div className="flex justify-center h-full w-full items-center">
       <div className="flex flex-col items-center">
         <img
@@ -19,198 +39,129 @@ const Challenges = () => {
           className="w-180 mb-30 opacity-40"
         />
         <p className="text-gray-4 leading-8 text-center font-medium text-24 tracking-tight">
-          준비중인
-          <br />
-          페이지입니다.
+          해당 결과가 없습니다.
         </p>
       </div>
     </div>
-    // <div className="relative h-full">
-    //   <PageTitle title="도전과제 목록" count={1} />
-    //   <div className="flex justify-end">
-    //     <button className="flex bg-blue-6 pr-16 pl-8 py-6 rounded">
-    //       <IoIosAdd className="text-white text-22" />
-    //       <span className="text-white text-16">추가</span>
-    //     </button>
-    //   </div>
-    //   <Table
-    //     columns={[
-    //       {
-    //         key: "name",
-    //         label: "이름",
-    //         render: (_, row) => (
-    //           <button
-    //             className="flex w-full text-start cursor-pointer"
-    //             onClick={() => {
-    //               setSelectedRow(row);
-    //             }}
-    //           >
-    //             <p className="text-blue-6 font-medium">{row.name}</p>
-    //           </button>
-    //         ),
-    //       },
-    //       { key: "category", label: "카테고리" },
-    //       { key: "duration", label: "기간" },
-    //       { key: "level", label: "난이도" },
-    //       { key: "todo", label: "할일" },
-    //       {
-    //         key: "actions",
-    //         label: "",
-    //         render: (_, row) => (
-    //           <div>
-    //             <button
-    //               onClick={() => {
-    //                 console.log(row.id);
-    //               }}
-    //             >
-    //               <RiDeleteBin6Line className="text-gray-6 text-xl hover:text-red-5" />
-    //             </button>
-    //           </div>
-    //         ),
-    //       },
-    //     ]}
-    //     data={DATA}
-    //   />
-    //   {selectedRow && (
-    //     <Modal
-    //       title="도전과제 수정"
-    //       buttonTitle="수정하기"
-    //       isOpen={!!selectedRow}
-    //       onClose={() => {
-    //         setSelectedRow(null);
-    //       }}
-    //       handleClickButton={() => {
-    //         alert("hi");
-    //         setSelectedRow(null);
-    //       }}
-    //     >
-    //       <div className="max-h-400">
-    //         <form>
-    //           <div className="flex flex-col mb-20">
-    //             <label className="mb-5 text-gray-6 text-14">제목</label>
-    //             <input
-    //               placeholder="제목을 작성해주세요."
-    //               defaultValue={selectedRow.name}
-    //               type="text"
-    //               className="focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-5  border-solid border-1 border-gray-3 rounded-md px-16 py-12"
-    //             />
-    //           </div>
-    //           <div className="flex flex-col mb-20 relative">
-    //             <label htmlFor="category" className="mb-5 text-gray-6 text-14">
-    //               카테고리
-    //             </label>
-    //             <button
-    //               className="w-full px-16 py-12 border border-gray-3 rounded-md text-left focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-5  bg-white relative"
-    //               onClick={(e) => {
-    //                 e.preventDefault();
-    //                 setIsSelectOpen(!isSelectOpen);
-    //               }}
-    //             >
-    //               {selected}
-    //               <FaCaretDown className="absolute right-16 text-24 top-1/2 -translate-y-1/2 text-gray-4" />
-    //             </button>
+  ) : isLoading ? (
+    <div className="flex justify-center items-center h-[400px]">
+      <AiOutlineLoading3Quarters className="text-40 animate-spin text-blue-6" />
+    </div>
+  ) : (
+    <div className="flex flex-col justify-between items-stretch h-full">
+      <div>
+        <PageTitle
+          title="위시리스트"
+          count={challengeList?.totalElements || 0}
+        />
+        <div className="flex justify-end">
+          <button
+            className="flex bg-blue-6 pr-16 pl-8 py-6 rounded"
+            onClick={() => {
+              setIsAddModalOpen(true);
+            }}
+          >
+            <IoIosAdd className="text-white text-22" />
+            <span className="text-white text-16">추가</span>
+          </button>
+        </div>
+        <Table
+          columnRatios={[0.5, 2, 1, 1, 0.5, 1, 1, 1, 1]}
+          columns={[
+            {
+              key: "challengeId",
+              label: "ID",
+            },
+            {
+              key: "name",
+              label: "이름",
+              render: (_, row) => (
+                <button
+                  className="flex w-full text-start cursor-pointer"
+                  onClick={() => {
+                    setSelectedRow(row);
+                  }}
+                >
+                  <p className="text-blue-6 font-medium">{row.challengeName}</p>
+                </button>
+              ),
+            },
+            {
+              key: "categoryStatus",
+              label: "상태",
+              render: (_, row) => {
+                return Constants.CATEGORY_STATUS?.[
+                  row.challengeStatus as keyof typeof Constants.CATEGORY_STATUS
+                ] ? (
+                  <p
+                    className={`${row.challengeStatus === 1 ? "bg-yellow-1 text-yellow-7" : row.challengeStatus === 2 ? "bg-blue-0 text-blue-6" : "bg-gray-2 text-gray-6"} inline-block px-8 py-3 rounded text-14`}
+                  >
+                    {
+                      Constants.CATEGORY_STATUS?.[
+                        row.challengeStatus as keyof typeof Constants.CATEGORY_STATUS
+                      ]
+                    }
+                  </p>
+                ) : (
+                  <p className="px-5 text-gray-5">-</p>
+                );
+              },
+            },
+            { key: "categoryId", label: "카테고리 ID" },
+            { key: "challengeDiff", label: "diff??" },
+            {
+              key: "challengeTerm",
+              label: "기간",
+              render: (_, row) => {
+                return <p>{row?.challengeTerm || 0}일</p>;
+              },
+            },
+            {
+              key: "challengeTodoCount",
+              label: "할일 갯수",
+              render: (_, row) => {
+                return <p>{row?.challengeTodoCount || 0}개</p>;
+              },
+            },
+            { key: "lastUpdatedBy", label: "마지막 수정인" },
+            {
+              key: "lastUpdatedAt",
+              label: "마지막 수정일",
+              render: (_, row) => {
+                const original = row?.lastUpdatedAt || "";
+                const dateOnly = original.split("T")[0];
 
-    //             {isSelectOpen && (
-    //               <ul className="absolute top-full left-0 w-full bg-white border border-gray-3 rounded-md shadow-md mt-1 z-10 max-h-220 overflow-y-auto">
-    //                 {OPTIONS.map((option) => (
-    //                   <li
-    //                     key={option.value}
-    //                     className="px-16 py-12 cursor-pointer hover:bg-blue-0"
-    //                     onClick={() => {
-    //                       setSelected(option.label);
-    //                       setIsSelectOpen(false);
-    //                     }}
-    //                   >
-    //                     {option.label}
-    //                   </li>
-    //                 ))}
-    //               </ul>
-    //             )}
-    //           </div>
-    //           <div className="flex flex-col mb-20">
-    //             <label className="mb-5 text-gray-6 text-14">난이도</label>
-    //             <input
-    //               placeholder="난이도를 작성해주세요."
-    //               defaultValue={selectedRow.level}
-    //               type="text"
-    //               className="focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-5   border-solid border-1 border-gray-3 rounded-md px-16 py-12"
-    //             />
-    //           </div>
-    //           <div className="flex flex-col mb-20">
-    //             <label className="mb-5 text-gray-6 text-14">기간</label>
-    //             <input
-    //               placeholder="기간을 작성해주세요."
-    //               defaultValue={selectedRow.duration}
-    //               type="text"
-    //               className="focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-5 border-solid border-1 border-gray-3 rounded-md px-16 py-12"
-    //             />
-    //           </div>
-    //           <div className="flex flex-col mb-20">
-    //             <label className="mb-5 text-gray-6 text-14">할일</label>
-    //             <button
-    //               className="absolute right-30 cursor-pointer flex items-center"
-    //               onClick={(e) => {
-    //                 e.preventDefault();
-    //               }}
-    //             >
-    //               <span className="mr-2 text-13 tracking-tight text-blue-6 font-semibold">
-    //                 추가하기
-    //               </span>
-    //               <FiPlus className="text-blue-6 text-16" />
-    //             </button>
-    //             <input
-    //               placeholder="할일을 작성해주세요."
-    //               type="text"
-    //               className="focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-5 border-solid border-1 border-gray-3 rounded-md px-16 py-12"
-    //             />
-    //           </div>
-    //         </form>
-    //       </div>
-    //     </Modal>
-    //   )}
-    //   <Footer total={1} />
-    // </div>
+                return <p>{dateOnly}</p>;
+              },
+            },
+          ]}
+          data={challengeList?.content}
+        />
+        {selectedRow && (
+          <DetailModal
+            isOpen={!!selectedRow}
+            close={() => {
+              setSelectedRow(null);
+            }}
+            challenge={selectedRow}
+          />
+        )}
+        <AddModal
+          isOpen={isAddModalOpen}
+          onClose={() => {
+            setIsAddModalOpen(false);
+          }}
+        />
+      </div>
+
+      <Footer
+        totalElementPerPage={challengeList?.content?.length}
+        totalPages={challengeList?.totalPages}
+        selectedPage={selectedPage}
+        setSelectedPage={setSelectedPage}
+      />
+    </div>
   );
 };
 
 export default Challenges;
-
-// const OPTIONS = [
-//   { value: "volvo", label: "운동" },
-//   { value: "saab", label: "기상" },
-//   { value: "mercedes", label: "공부" },
-//   { value: "mercedes1", label: "공부" },
-//   { value: "mercedes2", label: "공부" },
-//   { value: "mercedes3", label: "공부" },
-//   { value: "mercedes4", label: "공부" },
-//   { value: "mercedes5", label: "공부" },
-//   { value: "mercedes6", label: "공부" },
-//   { value: "mercedes7", label: "공부" },
-// ];
-
-// const DATA = [
-//   {
-//     name: "도전과제1",
-//     id: "1",
-//     category: "운동",
-//     duration: "30",
-//     level: "상",
-//     todo: ["할일1", "할일2"],
-//   },
-//   {
-//     name: "도전과제2",
-//     id: "2",
-//     category: "운동",
-//     duration: "20",
-//     level: "중",
-//     todo: ["할일2"],
-//   },
-//   {
-//     name: "도전과제3",
-//     id: "3",
-//     category: "기상",
-//     duration: "8",
-//     level: "하",
-//     todo: ["할일3"],
-//   },
-// ];

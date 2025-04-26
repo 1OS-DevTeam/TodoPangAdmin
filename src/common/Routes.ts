@@ -17,7 +17,7 @@ const ROUTES = {
   CHALLENGES: {
     KEY: "challenges",
     PATH: "/challenges",
-    TITLE: "위시 리스트",
+    TITLE: "위시리스트",
   },
 };
 

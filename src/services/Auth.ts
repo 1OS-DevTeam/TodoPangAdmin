@@ -1,30 +1,15 @@
 import axios from "axios";
 import { Config } from "src/common";
+import { axiosInstance } from "./axiosInstance";
 
-const login = async (accessToken: string) => {
-  const res = await axios.post(
-    `${Config.SERVER_URL}/auth/login`,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+const login = async () => {
+  const res = await axiosInstance.post(`${Config.SERVER_URL}/auth/login`);
 
   return res?.data?.data;
 };
 
-const logout = async (accessToken: string) => {
-  const res = await axios.post(
-    `${Config.SERVER_URL}/auth/logout`,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+const logout = async () => {
+  const res = await axios.post(`${Config.SERVER_URL}/auth/logout`);
 
   return res?.data?.data;
 };
