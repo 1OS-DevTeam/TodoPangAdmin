@@ -11,7 +11,7 @@ import AddModal from "./AddModal";
 const Challenges = () => {
   // const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedRow, setSelectedRow] = useState<any>(null);
   const [selectedPage, setSelectedPage] = useState(0);
 
   const {
@@ -137,7 +137,7 @@ const Challenges = () => {
               },
             },
           ]}
-          data={challengeList?.content}
+          data={challengeList?.content || []}
         />
         {selectedRow && (
           <DetailModal
