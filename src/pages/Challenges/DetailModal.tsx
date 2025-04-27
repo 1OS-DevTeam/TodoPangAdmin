@@ -1,4 +1,3 @@
-import { FaCaretDown } from "@react-icons/all-files/fa/FaCaretDown";
 import { Modal } from "src/components";
 import { Challenge } from "src/types/challenge";
 
