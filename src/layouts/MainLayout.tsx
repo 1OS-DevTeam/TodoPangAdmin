@@ -23,15 +23,21 @@ const MainLayout = () => {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        navigate("/login");
+        return;
+      }
+
       await Auth.logout();
+      await signOut(auth);
       localStorage.removeItem("accessToken");
 
-      console.log("로그아웃 완료");
       navigate("/login");
     } catch (error) {
-      localStorage.removeItem("accessToken");
       console.error("로그아웃 실패:", error);
+      localStorage.removeItem("accessToken");
+      navigate("/login");
     }
   };
 

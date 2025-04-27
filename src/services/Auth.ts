@@ -9,7 +9,7 @@ const login = async () => {
 };
 
 const logout = async () => {
-  const res = await axios.post(`${Config.SERVER_URL}/auth/logout`);
+  const res = await axiosInstance.post(`${Config.SERVER_URL}/auth/logout`);
 
   return res?.data?.data;
 };

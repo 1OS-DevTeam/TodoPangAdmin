@@ -214,7 +214,7 @@ const Categories = () => {
               },
               {
                 key: "lastUpdatedBy",
-                label: "마지막 수정인",
+                label: "수정인",
                 render: (_, row) => {
                   return (
                     <p className="text-gray-6 tracking-tight">
@@ -225,7 +225,7 @@ const Categories = () => {
               },
               {
                 key: "lastUpdatedAt",
-                label: "마지막 수정일",
+                label: "수정일",
                 render: (_, row) => {
                   const original = row?.lastUpdatedAt || "";
                   const dateOnly = original.split("T")[0];

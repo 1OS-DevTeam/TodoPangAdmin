@@ -2,23 +2,22 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AiOutlineLoading3Quarters } from "@react-icons/all-files/ai/AiOutlineLoading3Quarters";
 import { IoIosAdd } from "@react-icons/all-files/io/IoIosAdd";
-import { FaCaretDown } from "@react-icons/all-files/fa/FaCaretDown";
-import { Modal, PageTitle, Table, Footer } from "src/components";
+import { PageTitle, Table, Footer } from "src/components";
 import services from "src/services";
 import { Constants } from "src/common";
 import DetailModal from "./DetailModal";
 import AddModal from "./AddModal";
 
 const Challenges = () => {
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
+  // const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [selectedPage, setSelectedPage] = useState(1);
+  const [selectedPage, setSelectedPage] = useState(0);
 
   const {
     data: challengeList,
     isLoading,
-    isFetching,
+    // isFetching,
     isError,
   } = useQuery({
     queryKey: ["challengeList", selectedPage],
@@ -50,6 +49,7 @@ const Challenges = () => {
   ) : (
     <div className="flex flex-col justify-between items-stretch h-full">
       <div>
+        ㅣ
         <PageTitle
           title="위시리스트"
           count={challengeList?.totalElements || 0}
@@ -66,7 +66,7 @@ const Challenges = () => {
           </button>
         </div>
         <Table
-          columnRatios={[0.5, 2, 1, 1, 0.5, 1, 1, 1, 1]}
+          columnRatios={[0.7, 2.5, 0.8, 0.8, 0.8, 0.8, 0.8, 1.5, 1.5]}
           columns={[
             {
               key: "challengeId",
@@ -82,7 +82,9 @@ const Challenges = () => {
                     setSelectedRow(row);
                   }}
                 >
-                  <p className="text-blue-6 font-medium">{row.challengeName}</p>
+                  <p className="text-blue-6 font-medium underline underline-offset-2">
+                    {row.challengeName}
+                  </p>
                 </button>
               ),
             },
@@ -107,8 +109,8 @@ const Challenges = () => {
                 );
               },
             },
-            { key: "categoryId", label: "카테고리 ID" },
-            { key: "challengeDiff", label: "diff??" },
+            { key: "categoryId", label: "카테고리ID" },
+            { key: "challengeDiff", label: "난이도" },
             {
               key: "challengeTerm",
               label: "기간",
@@ -123,10 +125,10 @@ const Challenges = () => {
                 return <p>{row?.challengeTodoCount || 0}개</p>;
               },
             },
-            { key: "lastUpdatedBy", label: "마지막 수정인" },
+            { key: "lastUpdatedBy", label: "수정인" },
             {
               key: "lastUpdatedAt",
-              label: "마지막 수정일",
+              label: "수정일",
               render: (_, row) => {
                 const original = row?.lastUpdatedAt || "";
                 const dateOnly = original.split("T")[0];

@@ -10,7 +10,7 @@ const PageTitle = ({ title, count = 0 }: Props) => {
         {title}
       </h2>
       {!!count && (
-        <span className="ml-4 text-22 leading-6 font-medium tracking-tighter">
+        <span className="ml-8 text-20 leading-6 font-normal tracking-tighter text-gray-8">
           ({count}개)
         </span>
       )}

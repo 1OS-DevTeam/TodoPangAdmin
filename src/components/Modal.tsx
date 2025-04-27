@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { IoClose } from "@react-icons/all-files/io5/IoClose";
 import { AiOutlineLoading3Quarters } from "@react-icons/all-files/ai/AiOutlineLoading3Quarters";
 
@@ -21,6 +21,18 @@ const Modal = ({
   isButtonLoading,
   handleClickButton,
 }: Props) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
@@ -29,7 +41,7 @@ const Modal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl shadow-lg w-[500px] relative animate-fade-in px-30 py-40"
+        className="bg-white rounded-xl max-h-[720px] overflow-auto shadow-lg w-[500px] relative animate-fade-in px-30 py-40"
         onClick={(e) => e.stopPropagation()}
       >
         <h4 className="mb-40 text-center text-22 font-semibold tracking-tight">
