@@ -18,3 +18,17 @@ export interface Challenge {
   lastUpdatedBy: string;
   todoList: Todo[];
 }
+
+export interface UpdatedChallenge {
+  challengeId: number;
+  categoryId: number;
+  newChallengeTitle?: string;
+  newChallengeTerm?: number;
+  newChallengeDiff?: number;
+  newChallengeStatus: number;
+  newTodoList?: {
+    todoId: number;
+    newTodoOrder: number;
+    newTodoTitle: string;
+  }[];
+}

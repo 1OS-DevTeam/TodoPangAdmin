@@ -2,33 +2,52 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AiOutlineLoading3Quarters } from "@react-icons/all-files/ai/AiOutlineLoading3Quarters";
 import { IoIosAdd } from "@react-icons/all-files/io/IoIosAdd";
+import { MdCheckBoxOutlineBlank } from "@react-icons/all-files/md/MdCheckBoxOutlineBlank";
+import { MdCheckBox } from "@react-icons/all-files/md/MdCheckBox";
+import { CgArrowsExchange } from "@react-icons/all-files/cg/CgArrowsExchange";
+
 import { PageTitle, Table, Footer } from "src/components";
 import services from "src/services";
 import { Constants } from "src/common";
 import DetailModal from "./DetailModal";
 import AddModal from "./AddModal";
+import { useAppStore } from "src/stores";
+import StatusChangeModal from "./StatusChangeModal";
 
 const Challenges = () => {
-  // const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const { setToastState } = useAppStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
   const [selectedPage, setSelectedPage] = useState(0);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
 
   const {
     data: challengeList,
     isLoading,
-    // isFetching,
     isError,
   } = useQuery({
     queryKey: ["challengeList", selectedPage],
     queryFn: () =>
       services.Challenge.fetchChallenges({
         page: selectedPage,
-        pageSize: 10,
+        pageSize: 20,
       }),
   });
 
-  console.log(challengeList);
+  const handleChangeStatus = () => {
+    if (!selectedIds.length) {
+      setToastState({
+        isOpen: true,
+        type: "warn",
+        title: "변경할 카테고리가 없습니다.",
+        message: "상태를 변경할 카테고리를 선택해주세요.",
+      });
+      return;
+    }
+
+    setIsStatusModalOpen(true);
+  };
 
   return isError ? (
     <div className="flex justify-center h-full w-full items-center">
@@ -49,12 +68,18 @@ const Challenges = () => {
   ) : (
     <div className="flex flex-col justify-between items-stretch h-full">
       <div>
-        ㅣ
         <PageTitle
           title="위시리스트"
           count={challengeList?.totalElements || 0}
         />
         <div className="flex justify-end">
+          <button
+            className="flex border-[1px] border-blue-6 pr-16 pl-8 mr-12 py-6 rounded hover:bg-blue-0"
+            onClick={handleChangeStatus}
+          >
+            <CgArrowsExchange className="text-blue-6 text-22 mr-4" />
+            <span className="text-blue-6 text-16 font-medium">상태 변경</span>
+          </button>
           <button
             className="flex bg-blue-6 pr-16 pl-8 py-6 rounded"
             onClick={() => {
@@ -66,8 +91,32 @@ const Challenges = () => {
           </button>
         </div>
         <Table
-          columnRatios={[0.7, 2.5, 0.8, 0.8, 0.8, 0.8, 0.8, 1.5, 1.5]}
+          columnRatios={[0.5, 0.7, 2.0, 0.8, 0.8, 0.8, 0.8, 0.8, 1.5, 1.5]}
           columns={[
+            {
+              key: "checkbox",
+              label: "",
+              render: (_, row) => (
+                <button
+                  className="flex w-full text-start cursor-pointer"
+                  onClick={() => {
+                    if (selectedIds.includes(row.challengeId)) {
+                      setSelectedIds(
+                        selectedIds.filter((id) => id !== row.challengeId)
+                      );
+                    } else {
+                      setSelectedIds([...selectedIds, row.challengeId]);
+                    }
+                  }}
+                >
+                  {selectedIds.includes(row.challengeId) ? (
+                    <MdCheckBox className="text-blue-6 text-24" />
+                  ) : (
+                    <MdCheckBoxOutlineBlank className="text-gray-3 text-24" />
+                  )}
+                </button>
+              ),
+            },
             {
               key: "challengeId",
               label: "ID",
@@ -137,7 +186,11 @@ const Challenges = () => {
               },
             },
           ]}
-          data={challengeList?.content || []}
+          data={
+            challengeList?.content?.sort(
+              (a, b) => a.challengeStatus - b.challengeStatus
+            ) || []
+          }
         />
         {selectedRow && (
           <DetailModal
@@ -152,6 +205,18 @@ const Challenges = () => {
           isOpen={isAddModalOpen}
           onClose={() => {
             setIsAddModalOpen(false);
+          }}
+        />
+        <StatusChangeModal
+          selectedData={
+            challengeList?.content?.filter((item) =>
+              selectedIds.includes(item.challengeId)
+            ) || []
+          }
+          isOpen={isStatusModalOpen}
+          onClose={() => {
+            setIsStatusModalOpen(false);
+            setSelectedIds([]);
           }}
         />
       </div>

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Config } from "src/common";
 import { axiosInstance } from "./axiosInstance";
 
