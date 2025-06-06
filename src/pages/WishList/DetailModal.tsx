@@ -120,8 +120,8 @@ const DetailModal = ({ isOpen, close, challenge }: Props) => {
 
   return (
     <Modal
-      title={challenge?.challengeName || "위시"}
-      buttonTitle="수정하기"
+      title="위시 수정하기"
+      buttonTitle="완료"
       isOpen={isOpen}
       onClose={() => {
         close();

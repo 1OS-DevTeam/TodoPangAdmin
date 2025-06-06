@@ -1,4 +1,6 @@
 import { ReactNode } from "react";
+import { MdCheckBoxOutlineBlank } from "@react-icons/all-files/md/MdCheckBoxOutlineBlank";
+// import { MdCheckBox } from "@react-icons/all-files/md/MdCheckBox";
 
 interface TableColumn<T> {
   key: keyof T | string;
@@ -9,28 +11,28 @@ interface TableColumn<T> {
 interface TableProps<T> {
   columns: TableColumn<T>[];
   data: T[];
-  columnRatios?: number[];
 }
 
-const Table = <T,>({ columns, data, columnRatios }: TableProps<T>) => {
-  const totalRatio =
-    columnRatios?.reduce((sum, r) => sum + r, 0) || columns.length;
-  const computedWidths = columnRatios
-    ? columnRatios.map((r) => Math.round((r / totalRatio) * 100) + "%")
-    : Array(columns.length).fill(`${100 / columns.length}%`);
-
+const Table = <T,>({ columns, data }: TableProps<T>) => {
   return (
-    <table className="border-collapse mt-20 table-fixed w-full">
+    <table className="w-full">
       <thead>
-        <tr className="text-left border-b-1 border-gray-1">
-          {columns.map((column, index) => (
+        <tr className="text-left border-b-1 border-gray-1 bg-gray-1">
+          {columns.map((column) => (
             <th
               key={String(column.key)}
               scope="col"
-              className="py-16 font-semibold"
-              style={{ width: computedWidths[index] }}
+              className="whitespace-nowrap py-12"
             >
-              {column.label}
+              {column.label === "checkbox" ? (
+                <button className="px-6 flex cursor-pointer" onClick={() => {}}>
+                  <MdCheckBoxOutlineBlank className="text-gray-4 text-24" />
+                </button>
+              ) : (
+                <p className="text-14 text-gray-6 font-medium">
+                  {column.label}
+                </p>
+              )}
             </th>
           ))}
         </tr>
@@ -39,13 +41,12 @@ const Table = <T,>({ columns, data, columnRatios }: TableProps<T>) => {
         {data.map((row, index) => (
           <tr
             key={index}
-            className={`text-left border-b-1 ${index !== data.length - 1 ? "border-gray-1" : "border-transparent"} hover:bg-[#f8fdffee]`}
+            className={`text-left border-b-1 ${index !== data.length - 1 ? "border-gray-1" : "border-transparent"} ${index % 2 === 0 ? "bg-white" : "bg-gray-0"}`}
           >
-            {columns.map((column, index) => (
+            {columns.map((column) => (
               <td
                 key={String(column.key)}
-                className={`py-12 text-gray-6 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis px-3`}
-                style={{ width: computedWidths[index] }}
+                className={`whitespace-nowrap py-12 text-gray-6 text-14 tracking-tight px-3`}
               >
                 {column.render
                   ? column.render(row[column.key as keyof T], row)

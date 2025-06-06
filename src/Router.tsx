@@ -6,7 +6,7 @@ import ROUTES from "src/common/Routes";
 import Dashboard from "src/pages/Dashboard";
 import Users from "src/pages/Users";
 import Categories from "src/pages/Categories";
-import Challenges from "src/pages/Challenges";
+import WishList from "src/pages/WishList";
 import Login from "./pages/Login";
 import RequireAuth from "src/components/RequireAuth";
 
@@ -26,7 +26,7 @@ const Router = () => {
           <Route path={ROUTES.MAIN.PATH} element={<Dashboard />} />
           <Route path={ROUTES.USERS.PATH} element={<Users />} />
           <Route path={ROUTES.CATEGORIES.PATH} element={<Categories />} />
-          <Route path={ROUTES.CHALLENGES.PATH} element={<Challenges />} />
+          <Route path={ROUTES.WISHLIST.PATH} element={<WishList />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" />} />

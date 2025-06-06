@@ -5,18 +5,18 @@ const ROUTES = {
     TITLE: "홈",
   },
   USERS: {
-    KEY: "users",
-    PATH: "/users",
-    TITLE: "사용자",
+    KEY: "review",
+    PATH: "/review",
+    TITLE: "리뷰",
   },
   CATEGORIES: {
     KEY: "categories",
     PATH: "/categories",
     TITLE: "카테고리",
   },
-  CHALLENGES: {
-    KEY: "challenges",
-    PATH: "/challenges",
+  WISHLIST: {
+    KEY: "wishlist",
+    PATH: "/wishlist",
     TITLE: "위시리스트",
   },
 };

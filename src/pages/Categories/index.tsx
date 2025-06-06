@@ -6,8 +6,11 @@ import { AiOutlineLoading3Quarters } from "@react-icons/all-files/ai/AiOutlineLo
 import { MdCheckBoxOutlineBlank } from "@react-icons/all-files/md/MdCheckBoxOutlineBlank";
 import { MdCheckBox } from "@react-icons/all-files/md/MdCheckBox";
 import { CgArrowsExchange } from "@react-icons/all-files/cg/CgArrowsExchange";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
-import { Modal, PageTitle, Table } from "src/components";
+import { Modal, PageTitle, Section, Table } from "src/components";
 import services from "src/services";
 import { Constants } from "src/common";
 import ResponseError, { errorHandler } from "src/utils/Error";
@@ -97,155 +100,162 @@ const Categories = () => {
   };
 
   return (
-    <div className="relative h-full">
-      <PageTitle title="카테고리 목록" count={data?.length || 0} />
-      {isLoading || isFetching ? (
-        <div className="flex justify-center items-center h-[400px]">
-          <AiOutlineLoading3Quarters className="text-40 animate-spin text-blue-6" />
-        </div>
-      ) : (
-        <>
-          <div className="flex justify-end">
-            <button
-              className="flex border-[1px] border-blue-6 pr-16 pl-8 mr-12 py-6 rounded hover:bg-blue-0"
-              onClick={handleChangeStatus}
-            >
-              <CgArrowsExchange className="text-blue-6 text-22 mr-4" />
-              <span className="text-blue-6 text-16 font-medium">상태 변경</span>
-            </button>
-            <button
-              className="flex bg-blue-6 pr-16 pl-8 py-6 rounded hover:bg-blue-8"
-              onClick={() => {
-                setIsAddModalOpen(true);
-              }}
-            >
-              <IoIosAdd className="text-white text-22" />
-              <span className="text-white text-16">카테고리 추가</span>
-            </button>
+    <div>
+      <PageTitle title="카테고리" />
+      <Section>
+        {isLoading || isFetching ? (
+          <div className="flex justify-center items-center h-[400px]">
+            <AiOutlineLoading3Quarters className="text-40 animate-spin text-blue-6" />
           </div>
-          <Table
-            columnRatios={[0.5, 0.5, 3, 1, 1, 1, 1]}
-            columns={[
-              {
-                key: "checkbox",
-                label: "",
-                render: (_, row) => (
-                  <button
-                    className="flex w-full text-start cursor-pointer"
-                    onClick={() => {
-                      if (selectedIds.includes(row.categoryId)) {
-                        setSelectedIds(
-                          selectedIds.filter((id) => id !== row.categoryId)
-                        );
-                      } else {
-                        setSelectedIds([...selectedIds, row.categoryId]);
-                      }
-                    }}
-                  >
-                    {selectedIds.includes(row.categoryId) ? (
-                      <MdCheckBox className="text-blue-6 text-24" />
-                    ) : (
-                      <MdCheckBoxOutlineBlank className="text-gray-3 text-24" />
-                    )}
-                  </button>
-                ),
-              },
-              {
-                key: "categoryId",
-                label: "ID",
-              },
-              {
-                key: "categoryTitle",
-                label: "이름",
-                render: (_, row) => (
-                  <button
-                    className="flex w-full text-start cursor-pointer"
-                    onClick={() => {
-                      if (row.categoryStatus < 1 || row.categoryStatus > 2) {
-                        setToastState({
-                          isOpen: true,
-                          type: "error",
-                          title: "수정 불가",
-                          message: "수정이 불가능한 상태입니다.",
-                        });
-                        return;
-                      }
-                      setSelectedItem(row);
-                      setIsOpen((prev) => !prev);
-                    }}
-                  >
-                    <p className="text-blue-6 font-medium underline underline-offset-2">
-                      {row.categoryTitle}
-                    </p>
-                  </button>
-                ),
-              },
-              {
-                key: "categoryStatus",
-                label: "상태",
-                render: (_, row) => {
-                  return Constants.CATEGORY_STATUS?.[
-                    row.categoryStatus as keyof typeof Constants.CATEGORY_STATUS
-                  ] ? (
-                    <p
-                      className={`${row.categoryStatus === 1 ? "bg-yellow-1 text-yellow-7" : row.categoryStatus === 2 ? "bg-blue-0 text-blue-6" : "bg-gray-2 text-gray-6"} inline-block px-8 py-3 rounded text-14`}
+        ) : (
+          <>
+            <div className="flex justify-between mb-20">
+              <button
+                className="flex items-center border-[1px] border-blue-6 pr-16 pl-8 mr-12 py-6 rounded hover:bg-blue-0"
+                onClick={handleChangeStatus}
+              >
+                <CgArrowsExchange className="text-blue-6 text-22 mr-4" />
+                <span className="text-blue-6 text-14 font-medium">
+                  상태 변경
+                </span>
+              </button>
+              <button
+                className="flex items-center bg-blue-6 pr-16 pl-8 py-6 rounded hover:bg-blue-8"
+                onClick={() => {
+                  setIsAddModalOpen(true);
+                }}
+              >
+                <IoIosAdd className="text-white text-22" />
+                <span className="text-white text-14">카테고리 추가</span>
+              </button>
+            </div>
+            <Table
+              columns={[
+                {
+                  key: "checkbox",
+                  label: "checkbox",
+                  render: (_, row) => (
+                    <button
+                      className="flex w-full px-6 text-start cursor-pointer"
+                      onClick={() => {
+                        if (selectedIds.includes(row.categoryId)) {
+                          setSelectedIds(
+                            selectedIds.filter((id) => id !== row.categoryId)
+                          );
+                        } else {
+                          setSelectedIds([...selectedIds, row.categoryId]);
+                        }
+                      }}
                     >
-                      {
-                        Constants.CATEGORY_STATUS?.[
-                          row.categoryStatus as keyof typeof Constants.CATEGORY_STATUS
-                        ]
-                      }
-                    </p>
-                  ) : (
-                    <p className="px-5 text-gray-5">-</p>
-                  );
+                      {selectedIds.includes(row.categoryId) ? (
+                        <MdCheckBox className="text-blue-6 text-24" />
+                      ) : (
+                        <MdCheckBoxOutlineBlank className="text-gray-3 text-24" />
+                      )}
+                    </button>
+                  ),
                 },
-              },
-              {
-                key: "challengesInvolved",
-                label: "포함된 위시",
-                render: (_, row) => {
-                  return (
-                    <p className="text-gray-6 tracking-tight">
-                      {row?.challengesInvolved || 0}개
-                    </p>
-                  );
+                {
+                  key: "categoryId",
+                  label: "ID",
                 },
-              },
-              {
-                key: "lastUpdatedBy",
-                label: "수정인",
-                render: (_, row) => {
-                  return (
-                    <p className="text-gray-6 tracking-tight">
-                      {row?.lastUpdatedBy || ""}
-                    </p>
-                  );
+                {
+                  key: "categoryTitle",
+                  label: "이름",
+                  render: (_, row) => (
+                    <button
+                      className="flex w-full text-start cursor-pointer"
+                      onClick={() => {
+                        if (row.categoryStatus < 1 || row.categoryStatus > 2) {
+                          setToastState({
+                            isOpen: true,
+                            type: "error",
+                            title: "수정 불가",
+                            message: "수정이 불가능한 상태입니다.",
+                          });
+                          return;
+                        }
+                        setSelectedItem(row);
+                        setIsOpen((prev) => !prev);
+                      }}
+                    >
+                      <p className="text-blue-6 font-medium underline underline-offset-2 text-14">
+                        {row.categoryTitle}
+                      </p>
+                    </button>
+                  ),
                 },
-              },
-              {
-                key: "lastUpdatedAt",
-                label: "수정일",
-                render: (_, row) => {
-                  const original = row?.lastUpdatedAt || "";
-                  const dateOnly = original.split("T")[0];
+                {
+                  key: "categoryStatus",
+                  label: "상태",
+                  render: (_, row) => {
+                    return Constants.CATEGORY_STATUS?.[
+                      row.categoryStatus as keyof typeof Constants.CATEGORY_STATUS
+                    ] ? (
+                      <p
+                        className={`${row.categoryStatus === 1 ? "bg-yellow-1 text-yellow-7" : row.categoryStatus === 2 ? "bg-blue-0 text-blue-6" : "bg-gray-2 text-gray-6"} inline-block px-8 py-3 rounded text-14`}
+                      >
+                        {
+                          Constants.CATEGORY_STATUS?.[
+                            row.categoryStatus as keyof typeof Constants.CATEGORY_STATUS
+                          ]
+                        }
+                      </p>
+                    ) : (
+                      <p className="text-14 px-5 text-gray-5">-</p>
+                    );
+                  },
+                },
+                {
+                  key: "challengesInvolved",
+                  label: "포함된 위시",
+                  render: (_, row) => {
+                    return (
+                      <p className="text-gray-6 tracking-tight text-14">
+                        {row?.challengesInvolved || 0}개
+                      </p>
+                    );
+                  },
+                },
+                {
+                  key: "lastUpdatedBy",
+                  label: "수정인",
+                  render: (_, row) => {
+                    return (
+                      <p className="text-gray-6 tracking-tight text-14">
+                        {row?.lastUpdatedBy || ""}
+                      </p>
+                    );
+                  },
+                },
+                {
+                  key: "lastUpdatedAt",
+                  label: "수정일시",
+                  render: (_, row) => {
+                    dayjs.extend(utc);
+                    dayjs.extend(timezone);
 
-                  return (
-                    <p className="text-gray-6 tracking-tight">{dateOnly}</p>
-                  );
+                    const time = row?.lastUpdatedAt || "";
+                    const formatted = dayjs(time)
+                      .utc()
+                      .tz("Asia/Seoul")
+                      .format("YYYY-MM-DD HH:mm");
+
+                    return <p className="text-14">{formatted}</p>;
+                  },
                 },
-              },
-            ]}
-            data={
-              data?.sort(
-                (a: Category, b: Category) =>
-                  new Date(b.lastUpdatedAt).valueOf() -
-                  new Date(a.lastUpdatedAt).valueOf()
-              ) as Category[]
-            }
-          />
-        </>
-      )}
+              ]}
+              data={
+                data?.sort(
+                  (a: Category, b: Category) =>
+                    new Date(b.lastUpdatedAt).valueOf() -
+                    new Date(a.lastUpdatedAt).valueOf()
+                ) as Category[]
+              }
+            />
+          </>
+        )}
+      </Section>
       <Modal
         title="카테고리 수정"
         buttonTitle="수정하기"

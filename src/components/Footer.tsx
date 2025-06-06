@@ -31,13 +31,13 @@ const Footer = ({
   };
 
   return (
-    <div className="border-t-1 w-full border-solid border-gray-1">
-      <p className="mt-16 text-right mb-20 tracking-tight text-gray-5 font-medium">
+    <div className="w-full mt-48">
+      <p className="mt-16 text-right mb-20 tracking-tight text-gray-5 text-14 font-medium">
         {selectedPage + 1}페이지 {totalElementPerPage}개의 결과
       </p>
       <div className="flex items-center justify-end">
         <button onClick={handlePrevGroup} disabled={startPage <= 0}>
-          <FaChevronLeft className="text-gray-4 text-20 mr-14 hover:text-blue-6" />
+          <FaChevronLeft className="text-gray-4 text-16 mr-14 hover:text-blue-6" />
         </button>
         {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
           const pageNumber = startPage + i;
@@ -46,7 +46,7 @@ const Footer = ({
             <button
               key={pageNumber}
               onClick={() => setSelectedPage(pageNumber)}
-              className={`px-10 text-16 mr-12 h-35 w-35 font-medium py-5 rounded ${
+              className={`px-10 text-14 mr-12 h-30 w-30 font-medium py-5 rounded ${
                 isSelected
                   ? "bg-blue-6 text-white"
                   : "bg-gray-1 text-gray-6 hover:bg-gray-3"
@@ -57,7 +57,7 @@ const Footer = ({
           );
         })}
         <button onClick={handleNextGroup} disabled={endPage >= totalPages - 1}>
-          <FaChevronRight className="text-gray-4 text-20 hover:text-blue-6" />
+          <FaChevronRight className="text-gray-4 text-16 hover:text-blue-6" />
         </button>
       </div>
     </div>

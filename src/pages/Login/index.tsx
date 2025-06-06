@@ -46,11 +46,11 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-gray-1 flex min-h-screen mx-auto items-center justify-center">
-      <div className="bg-blue-3 w-[460px] h-[400px] rounded-3xl mr-30 flex justify-center items-center">
-        <img src="images/logo-icon-todo.png" className="w-[240px] mb-20" />
+    <div className="md:bg-gray-1 flex md:flex-row flex-col w-full h-screen mx-auto items-center justify-center">
+      <div className="md:bg-blue-3 md:w-[460px] md:h-[400px] rounded-3xl md:mr-30 flex justify-center items-center mb-30 md:mb-0">
+        <img src="images/logo-icon-todo.png" className="w-200 mb-20" />
       </div>
-      <div className="bg-white w-[460px] h-[400px] rounded-3xl flex flex-col justify-center items-center">
+      <div className="bg-white md:w-[460px] md:h-[400px] rounded-3xl flex flex-col justify-center items-center">
         <div className="mb-50 text-center">
           <h1 className="text-24 font-bold tracking-tighter mb-16">
             투두팡 어드민 로그인

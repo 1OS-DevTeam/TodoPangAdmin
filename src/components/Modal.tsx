@@ -41,7 +41,7 @@ const Modal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl max-h-[720px] overflow-auto shadow-lg w-[500px] relative animate-fade-in px-30 py-40"
+        className="bg-white rounded-xl max-h-[720px] overflow-auto shadow-lg w-[60%] min-w-[350px] max-w-[600px] relative animate-fade-in px-30 py-40"
         onClick={(e) => e.stopPropagation()}
       >
         <h4 className="mb-40 text-center text-22 font-semibold tracking-tight">
