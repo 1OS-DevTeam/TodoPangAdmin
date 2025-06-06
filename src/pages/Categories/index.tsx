@@ -5,6 +5,7 @@ import { FaCaretDown } from "@react-icons/all-files/fa/FaCaretDown";
 import { AiOutlineLoading3Quarters } from "@react-icons/all-files/ai/AiOutlineLoading3Quarters";
 import { MdCheckBoxOutlineBlank } from "@react-icons/all-files/md/MdCheckBoxOutlineBlank";
 import { MdCheckBox } from "@react-icons/all-files/md/MdCheckBox";
+import { MdErrorOutline } from "@react-icons/all-files/md/MdErrorOutline";
 import { CgArrowsExchange } from "@react-icons/all-files/cg/CgArrowsExchange";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -45,7 +46,7 @@ const Categories = () => {
   } | null>(null);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
-  const { data, isLoading, isFetching } = useQuery({
+  const { data, isLoading, isFetching, isError } = useQuery({
     queryKey: ["categoryList"],
     queryFn: () => services.Category.fetchCategories(),
   });
@@ -103,7 +104,14 @@ const Categories = () => {
     <div>
       <PageTitle title="카테고리" />
       <Section>
-        {isLoading || isFetching ? (
+        {isError ? (
+          <div className="flex flex-col justify-center h-full w-full items-center my-32">
+            <MdErrorOutline className="text-40 text-gray-5" />
+            <p className="text-gray-5 leading-8 text-center text-14 tracking-normal">
+              오류가 발생했습니다.
+            </p>
+          </div>
+        ) : isLoading || isFetching ? (
           <div className="flex justify-center items-center h-[400px]">
             <AiOutlineLoading3Quarters className="text-40 animate-spin text-blue-6" />
           </div>

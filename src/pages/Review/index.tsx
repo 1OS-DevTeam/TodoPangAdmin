@@ -1,4 +1,14 @@
-const Dashboard = () => {
+// import { useQuery } from "@tanstack/react-query";
+// import services from "src/services";
+
+const Review = () => {
+  // const { data } = useQuery({
+  //   queryKey: ["review"],
+  //   queryFn: () => services.Reveiw.fetchReivews(),
+  // });
+
+  // console.log(data);
+
   return (
     <div className="flex justify-center h-full w-full items-center">
       <div className="flex flex-col items-center">
@@ -14,4 +24,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Review;
