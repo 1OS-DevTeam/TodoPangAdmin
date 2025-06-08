@@ -91,7 +91,7 @@ const WishList = () => {
                 columns={[
                   {
                     key: "checkbox",
-                    label: "checkbox",
+                    label: "",
                     render: (_, row) => (
                       <button
                         className="cursor-pointer px-6 flex"
@@ -195,8 +195,8 @@ const WishList = () => {
                       dayjs.extend(timezone);
 
                       const time = row?.lastUpdatedAt || "";
-                      const formatted = dayjs(time)
-                        .utc()
+                      const formatted = dayjs
+                        .utc(time)
                         .tz("Asia/Seoul")
                         .format("YYYY-MM-DD HH:mm");
 
@@ -228,12 +228,12 @@ const WishList = () => {
             setSelectedRow(null);
           }}
           challenge={selectedRow}
-          categories={data?.categories}
+          categories={{ ...data?.categories, 0: "미지정" }}
         />
       )}
       <AddModal
         isOpen={isAddModalOpen}
-        categories={data?.categories}
+        categories={{ ...data?.categories, 0: "미지정" }}
         onClose={() => {
           setIsAddModalOpen(false);
         }}

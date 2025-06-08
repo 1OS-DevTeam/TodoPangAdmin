@@ -60,7 +60,7 @@ const AddModal = ({ isOpen, onClose, categories }: Props) => {
   const handleSubmit = () => {
     if (
       !input.title.trim() ||
-      !input.category.key ||
+      !input.category.value ||
       !input.diff.trim() ||
       !input.term.trim()
     ) {
@@ -142,7 +142,7 @@ const AddModal = ({ isOpen, onClose, categories }: Props) => {
           />
         </div>
 
-        {/* 카테고리 ID */}
+        {/* 카테고리 */}
         <div className="relative flex flex-col mb-20" ref={selectBoxRef}>
           <label className="mb-5 text-gray-6 text-14">카테고리</label>
           <button

@@ -141,7 +141,7 @@ const Categories = () => {
               columns={[
                 {
                   key: "checkbox",
-                  label: "checkbox",
+                  label: "",
                   render: (_, row) => (
                     <button
                       className="flex w-full px-6 text-start cursor-pointer"
@@ -244,8 +244,8 @@ const Categories = () => {
                     dayjs.extend(timezone);
 
                     const time = row?.lastUpdatedAt || "";
-                    const formatted = dayjs(time)
-                      .utc()
+                    const formatted = dayjs
+                      .utc(time)
                       .tz("Asia/Seoul")
                       .format("YYYY-MM-DD HH:mm");
 
