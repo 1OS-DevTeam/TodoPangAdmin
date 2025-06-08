@@ -1,5 +1,9 @@
 import { Config } from "src/common";
-import { Challenge, UpdatedChallenge } from "src/types/challenge";
+import {
+  Challenge,
+  DeployChallenge,
+  UpdatedChallenge,
+} from "src/types/challenge";
 import { PaginationResponse } from "src/types/response";
 import { axiosInstance } from "./axiosInstance";
 
@@ -13,7 +17,12 @@ const fetchChallenges = async ({
   page,
   pageSize = 10,
   sort = "id,desc",
-}: FetchChallengeParams): Promise<PaginationResponse<Challenge[]>> => {
+}: FetchChallengeParams): Promise<{
+  categories: {
+    [key: number]: string;
+  };
+  challengeData: PaginationResponse<Challenge[]>;
+}> => {
   const res = await axiosInstance.get(`${Config.SERVER_URL}/challenge/list`, {
     params: {
       page,
@@ -52,11 +61,20 @@ const addChallenges = async ({
   return res?.data?.data;
 };
 
-const updateChallenges = async (updatedChallenges: UpdatedChallenge[]) => {
+const updateChallenges = async (updatedChallenges: UpdatedChallenge) => {
   const res = await axiosInstance.post(
     `${Config.SERVER_URL}/challenge/update`,
+    updatedChallenges
+  );
+
+  return res;
+};
+
+const deployChallenges = async (challenges: DeployChallenge[]) => {
+  const res = await axiosInstance.post(
+    `${Config.SERVER_URL}/challenge/deploy`,
     {
-      updatedChallenges,
+      data: challenges,
     }
   );
 
@@ -67,4 +85,5 @@ export default {
   fetchChallenges,
   addChallenges,
   updateChallenges,
+  deployChallenges,
 };

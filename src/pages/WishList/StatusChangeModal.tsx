@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { FaCaretDown } from "@react-icons/all-files/fa/FaCaretDown";
+
+import { IoMdRadioButtonOn } from "@react-icons/all-files/io/IoMdRadioButtonOn";
 import Modal from "src/components/Modal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import services from "src/services";
 import { useAppStore } from "src/stores";
 import ResponseError, { errorHandler } from "src/utils/Error";
 import { Constants } from "src/common";
-import { Challenge, UpdatedChallenge } from "src/types/challenge";
+import { Challenge, DeployChallenge } from "src/types/challenge";
 
 interface Props {
   isOpen: boolean;
@@ -22,13 +24,12 @@ const StatusChangeModal = ({ isOpen, onClose, selectedData }: Props) => {
     key: 1 | 2 | 3;
     status: string;
   } | null>(null);
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
 
   const { mutate: updateCategories } = useMutation({
-    mutationFn: (challengeList: UpdatedChallenge[]) => {
+    mutationFn: (challenges: DeployChallenge[]) => {
       setIsAddLoading(true);
 
-      return services.Challenge.updateChallenges(challengeList);
+      return services.Challenge.deployChallenges(challenges);
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -58,14 +59,13 @@ const StatusChangeModal = ({ isOpen, onClose, selectedData }: Props) => {
   });
 
   const handleSubmit = () => {
-    const updatedList: UpdatedChallenge[] = [];
+    const updatedList: DeployChallenge[] = [];
 
     if (selected) {
       selectedData.forEach((item) => {
         updatedList.push({
           challengeId: item.challengeId,
-          newChallengeStatus: selected.key,
-          categoryId: item.categoryId,
+          newStatus: selected.key,
         });
       });
     }
@@ -93,7 +93,7 @@ const StatusChangeModal = ({ isOpen, onClose, selectedData }: Props) => {
           >
             <div className="flex items-center">
               <p className="font-medium mr-4">{index + 1}.</p>
-              <p className="tracking-tight font-normal mr-10">
+              <p className="tracking-tight font-normal mr-10 text-14">
                 {selected.challengeName} (ID: {selected.challengeId})
               </p>
             </div>
@@ -113,46 +113,31 @@ const StatusChangeModal = ({ isOpen, onClose, selectedData }: Props) => {
         <label htmlFor="category" className="mb-5 text-gray-6 tracking-tight">
           일괄 변경할 상태
         </label>
-        <button
-          className="w-full px-16 py-12 border border-gray-3 rounded-md text-left focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-5  bg-white relative"
-          onClick={(e) => {
-            e.preventDefault();
-            setIsSelectOpen(!isSelectOpen);
-          }}
-        >
-          <span className={`${!!selected ? "text-black" : "text-gray-5"}`}>
-            {!!selected ? selected.status : "상태를 선택해주세요"}
-          </span>
-          <FaCaretDown className="absolute right-16 text-24 top-1/2 -translate-y-1/2 text-gray-4" />
-        </button>
-
-        {isSelectOpen && (
-          <ul className="absolute top-full left-0 w-full bg-white border border-gray-3 rounded-md shadow-md mt-1 z-60 max-h-220 overflow-y-auto">
-            {Object.entries(Constants.CATEGORY_STATUS)
-              .map(
-                ([key, value]) =>
-                  ({
-                    key: Number(key),
-                    status: value,
-                  }) as {
-                    key: 1 | 2 | 3;
-                    status: string;
-                  }
-              )
-              .map((item) => (
-                <li
-                  key={item.key}
-                  className="px-16 py-12 cursor-pointer hover:bg-blue-0"
-                  onClick={() => {
-                    setSelected(item);
-                    setIsSelectOpen(false);
-                  }}
-                >
-                  {item.status}
-                </li>
-              ))}
-          </ul>
-        )}
+        <ul className="flex">
+          {Object.entries(Constants.CATEGORY_STATUS)
+            .map(
+              ([key, value]) =>
+                ({
+                  key: Number(key),
+                  status: value,
+                }) as {
+                  key: 1 | 2 | 3;
+                  status: string;
+                }
+            )
+            .map((item) => (
+              <li
+                key={item.key}
+                className={`py-10 pr-24 flex ${selected?.key === item.key ? "text-blue-6 font-semibold hover:text-blue-6" : "text-gray-5 hover:text-gray-8"} items-center cursor-pointer`}
+                onClick={() => {
+                  setSelected(item);
+                }}
+              >
+                <IoMdRadioButtonOn className="mr-6 text-22" />
+                <p className="text-14">{item.status}</p>
+              </li>
+            ))}
+        </ul>
       </div>
     </Modal>
   );

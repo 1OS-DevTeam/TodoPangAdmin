@@ -21,14 +21,26 @@ export interface Challenge {
 
 export interface UpdatedChallenge {
   challengeId: number;
-  categoryId: number;
+  newCategoryId: number;
   newChallengeTitle?: string;
   newChallengeTerm?: number;
   newChallengeDiff?: number;
-  newChallengeStatus: number;
-  newTodoList?: {
+  todosToAdd: {
+    newTodoOrder: number;
+    newTodoTitle: string;
+  }[];
+  todosToUpdate: {
     todoId: number;
     newTodoOrder: number;
     newTodoTitle: string;
   }[];
+  todosToDelete: {
+    todoId: number;
+    newTodoStatus: number;
+  }[];
+}
+
+export interface DeployChallenge {
+  challengeId: number;
+  newStatus: number;
 }

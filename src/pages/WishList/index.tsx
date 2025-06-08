@@ -26,11 +26,7 @@ const WishList = () => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
 
-  const {
-    data: challengeList,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["challengeList", selectedPage],
     queryFn: () =>
       services.Challenge.fetchChallenges({
@@ -158,7 +154,17 @@ const WishList = () => {
                       );
                     },
                   },
-                  { key: "categoryId", label: "카테고리ID" },
+                  {
+                    key: "categoryId",
+                    label: "카테고리",
+                    render: (_, row) => {
+                      return (
+                        <p className="text-14">
+                          {data?.categories[row?.categoryId]}
+                        </p>
+                      );
+                    },
+                  },
                   { key: "challengeDiff", label: "난이도" },
                   {
                     key: "challengeTerm",
@@ -199,15 +205,15 @@ const WishList = () => {
                   },
                 ]}
                 data={
-                  challengeList?.content?.sort(
+                  data?.challengeData.content?.sort(
                     (a, b) => a.challengeStatus - b.challengeStatus
                   ) || []
                 }
               />
             </div>
             <Footer
-              totalElementPerPage={challengeList?.content?.length}
-              totalPages={challengeList?.totalPages}
+              totalElementPerPage={data?.challengeData.content?.length}
+              totalPages={data?.challengeData.totalPages}
               selectedPage={selectedPage}
               setSelectedPage={setSelectedPage}
             />
@@ -222,17 +228,19 @@ const WishList = () => {
             setSelectedRow(null);
           }}
           challenge={selectedRow}
+          categories={data?.categories}
         />
       )}
       <AddModal
         isOpen={isAddModalOpen}
+        categories={data?.categories}
         onClose={() => {
           setIsAddModalOpen(false);
         }}
       />
       <StatusChangeModal
         selectedData={
-          challengeList?.content?.filter((item) =>
+          data?.challengeData.content?.filter((item) =>
             selectedIds.includes(item.challengeId)
           ) || []
         }

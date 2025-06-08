@@ -41,28 +41,32 @@ const Modal = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl max-h-[720px] overflow-auto shadow-lg w-[60%] min-w-[350px] max-w-[600px] relative animate-fade-in px-30 py-40"
+        className="bg-white pt-30 rounded-xl shadow-lg w-[60%] min-w-[350px] max-w-[600px] relative animate-fade-in flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <h4 className="mb-40 text-center text-22 font-semibold tracking-tight">
+        <h4 className="text-center text-18 font-semibold tracking-tight shrink-0">
           {title}
         </h4>
         <button
-          className="absolute top-20 right-20 p-20 cursor-pointer"
+          className="absolute top-8 right-20 p-20 cursor-pointer"
           onClick={onClose}
         >
           <IoClose className="text-25 text-gray-6" />
         </button>
-        <div>{children}</div>
+
+        <div className="overflow-auto min-h-[240px] max-h-[70vh] px-30 py-30">
+          {children}
+        </div>
+
         <button
           disabled={isButtonLoading}
-          className="w-full bg-blue-6 items-center text-white mt-40 h-55 rounded-lg text-16 font-medium tracking-tight hover:bg-blue-7 flex justify-center align-middle"
+          className="w-full bg-blue-6 items-center text-white h-60 rounded-b-10 text-16 font-medium tracking-tight hover:bg-blue-7 flex justify-center align-middle shrink-0"
           onClick={handleClickButton}
         >
           {isButtonLoading ? (
             <AiOutlineLoading3Quarters className="h-55 text-22 animate-spin text-white" />
           ) : (
-            <span className="">{buttonTitle}</span>
+            <span>{buttonTitle}</span>
           )}
         </button>
       </div>

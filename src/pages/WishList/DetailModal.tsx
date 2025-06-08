@@ -1,52 +1,63 @@
-import { useState, useEffect } from "react";
-import { FaCaretDown } from "@react-icons/all-files/fa/FaCaretDown";
+import { useState, useEffect, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FaCaretDown } from "@react-icons/all-files/fa/FaCaretDown";
+import { FaCaretUp } from "@react-icons/all-files/fa/FaCaretUp";
 
 import { Modal } from "src/components";
 import { Challenge, UpdatedChallenge, Todo } from "src/types/challenge";
-import { Constants } from "src/common";
-import DraggableTodoList from "./DraggableTodoList";
 import ResponseError, { errorHandler } from "src/utils/Error";
 import services from "src/services";
 import { useAppStore } from "src/stores";
+
+import DraggableTodoList from "./DraggableTodoList";
 
 interface Props {
   isOpen: boolean;
   challenge: Challenge;
   close: () => void;
+  categories?: { [key: number]: string };
 }
 
-const DetailModal = ({ isOpen, close, challenge }: Props) => {
+const DetailModal = ({ isOpen, close, challenge, categories }: Props) => {
   const queryClient = useQueryClient();
   const { setToastState } = useAppStore();
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Challenge>(challenge);
-  const [selected, setSelected] = useState<{
-    key: 1 | 2 | 3;
-    status: string;
-  } | null>(null);
+  const [isSelectBoxOpen, setIsSelectBoxOpen] = useState<boolean>(false);
+  const [selectedCategory, setSelectedCategory] = useState({
+    key: challenge.categoryId,
+    value: categories?.[challenge.categoryId],
+  });
   const [isLoading, setIsLoading] = useState(false);
+  const selectBoxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        selectBoxRef.current &&
+        !selectBoxRef.current.contains(event.target as Node)
+      ) {
+        setIsSelectBoxOpen(false);
+      }
+    };
+
+    if (isSelectBoxOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSelectBoxOpen]);
 
   useEffect(() => {
     if (isOpen) {
       setSelectedItem(challenge);
-      const currentStatus = Object.entries(Constants.CATEGORY_STATUS).find(
-        ([key]) => Number(key) === challenge.challengeStatus
-      );
-      if (currentStatus) {
-        setSelected({
-          key: Number(currentStatus[0]) as 1 | 2 | 3,
-          status: currentStatus[1],
-        });
-      } else {
-        setSelected(null);
-      }
-      setIsSelectOpen(false);
+      setIsSelectBoxOpen(false);
     }
   }, [challenge, isOpen]);
 
   const { mutate: updateChallengeMutation } = useMutation({
-    mutationFn: (challengesToUpdate: UpdatedChallenge[]) => {
+    mutationFn: (challengesToUpdate: UpdatedChallenge) => {
       setIsLoading(true);
       return services.Challenge.updateChallenges(challengesToUpdate);
     },
@@ -77,44 +88,60 @@ const DetailModal = ({ isOpen, close, challenge }: Props) => {
   });
 
   const handleClickButton = () => {
-    const changedOrNewTodosForPayload: UpdatedChallenge["newTodoList"] = [];
     const originalTodosMap = new Map(
-      (challenge.todoList || []).map((todo) => [Number(todo.todoId), todo])
+      (challenge.todoList || []).map((todo) => [todo.todoId, todo])
+    );
+    const currentTodosMap = new Map(
+      (selectedItem.todoList || []).map((todo) => [todo.todoId, todo])
     );
 
-    (selectedItem.todoList || []).forEach((currentTodo) => {
-      const numericCurrentTodoId = Number(currentTodo.todoId);
-      const originalTodo = originalTodosMap.get(numericCurrentTodoId);
+    const todosToAdd: UpdatedChallenge["todosToAdd"] = [];
+    const todosToUpdate: UpdatedChallenge["todosToUpdate"] = [];
+    const todosToDelete: UpdatedChallenge["todosToDelete"] = [];
 
-      const transformedTodo = {
-        todoId: numericCurrentTodoId,
-        newTodoOrder: currentTodo.todoOrder,
-        newTodoTitle: currentTodo.todoTitle,
-      };
+    currentTodosMap.forEach((currentTodo, todoId) => {
+      const originalTodo = originalTodosMap.get(todoId);
 
       if (!originalTodo) {
-        changedOrNewTodosForPayload.push(transformedTodo);
+        todosToAdd.push({
+          newTodoOrder: currentTodo.todoOrder,
+          newTodoTitle: currentTodo.todoTitle,
+        });
       } else {
         if (
-          currentTodo.todoOrder !== originalTodo.todoOrder ||
-          currentTodo.todoTitle !== originalTodo.todoTitle
+          originalTodo.todoOrder !== currentTodo.todoOrder ||
+          originalTodo.todoTitle !== currentTodo.todoTitle
         ) {
-          changedOrNewTodosForPayload.push(transformedTodo);
+          todosToUpdate.push({
+            todoId: currentTodo.todoId,
+            newTodoOrder: currentTodo.todoOrder,
+            newTodoTitle: currentTodo.todoTitle,
+          });
         }
+      }
+    });
+
+    originalTodosMap.forEach((originalTodo, todoId) => {
+      if (!currentTodosMap.has(todoId)) {
+        todosToDelete.push({
+          todoId: originalTodo.todoId,
+          newTodoStatus: 3,
+        });
       }
     });
 
     const updatedChallengePayload: UpdatedChallenge = {
       challengeId: selectedItem.challengeId,
-      categoryId: selectedItem.categoryId,
+      newCategoryId: selectedItem.categoryId,
       newChallengeTitle: selectedItem.challengeName,
       newChallengeTerm: selectedItem.challengeTerm,
       newChallengeDiff: selectedItem.challengeDiff,
-      newChallengeStatus: selectedItem.challengeStatus,
-      newTodoList: changedOrNewTodosForPayload,
+      todosToAdd,
+      todosToUpdate,
+      todosToDelete,
     };
 
-    const challengesToUpdate: UpdatedChallenge[] = [updatedChallengePayload];
+    const challengesToUpdate: UpdatedChallenge = updatedChallengePayload;
     updateChallengeMutation(challengesToUpdate);
   };
 
@@ -145,6 +172,61 @@ const DetailModal = ({ isOpen, close, challenge }: Props) => {
                 }));
               }}
             />
+          </div>
+          <div className="relative flex flex-col mb-20" ref={selectBoxRef}>
+            <label className="mb-5 text-gray-6 text-14">카테고리</label>
+            <button
+              className="w-full px-16 py-12 border border-gray-3 rounded-md text-left focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-5  bg-white relative"
+              onClick={(e) => {
+                e.preventDefault();
+                setIsSelectBoxOpen(!isSelectBoxOpen);
+              }}
+            >
+              <span
+                className={`${!!selectedCategory.value ? "text-black" : "text-gray-5"}`}
+              >
+                {!!selectedCategory.value
+                  ? selectedCategory.value
+                  : "카테고리를 선택해주세요"}
+              </span>
+              {isSelectBoxOpen ? (
+                <FaCaretUp className="absolute right-16 text-24 top-1/2 -translate-y-1/2 text-blue-6" />
+              ) : (
+                <FaCaretDown className="absolute right-16 text-24 top-1/2 -translate-y-1/2 text-gray-4" />
+              )}
+            </button>
+
+            {isSelectBoxOpen && categories && (
+              <ul className="absolute top-full left-0 w-full bg-white border border-gray-3 rounded-md shadow-md mt-1 z-[100] max-h-220 overflow-y-auto">
+                {Object.entries(categories)
+                  .map(
+                    ([key, value]) =>
+                      ({
+                        key: Number(key),
+                        value,
+                      }) as {
+                        key: 1 | 2 | 3;
+                        value: string;
+                      }
+                  )
+                  .map((item) => (
+                    <li
+                      key={item.key}
+                      className="px-16 py-12 cursor-pointer hover:bg-blue-0"
+                      onClick={() => {
+                        setSelectedCategory(item);
+                        setSelectedItem((prev) => ({
+                          ...prev,
+                          categoryId: item.key,
+                        }));
+                        setIsSelectBoxOpen(false);
+                      }}
+                    >
+                      {item.value}
+                    </li>
+                  ))}
+              </ul>
+            )}
           </div>
           <div className="flex flex-col mb-20">
             <label className="mb-5 text-gray-6 text-14">난이도</label>
@@ -178,59 +260,10 @@ const DetailModal = ({ isOpen, close, challenge }: Props) => {
               }}
             />
           </div>
-          <div className="flex flex-col relative mb-20">
-            <label className="mb-5 text-gray-6 tracking-tight">
-              변경할 상태
-            </label>
-            <button
-              className="w-full px-16 py-12 border border-gray-3 rounded-md text-left focus:outline-none focus:ring-2 focus:ring-blue-0 focus:border-blue-5  bg-white relative"
-              onClick={(e) => {
-                e.preventDefault();
-                setIsSelectOpen(!isSelectOpen);
-              }}
-            >
-              <span>
-                {selected?.status
-                  ? selected.status
-                  : Constants.CATEGORY_STATUS?.[
-                      selectedItem?.challengeStatus as keyof typeof Constants.CATEGORY_STATUS
-                    ] || "상태 선택"}
-              </span>
-              <FaCaretDown className="absolute right-16 text-24 top-1/2 -translate-y-1/2 text-gray-4" />
-            </button>
-
-            {isSelectOpen && (
-              <ul className="absolute top-full left-0 w-full bg-white border border-gray-3 rounded-md shadow-md mt-1 z-10 max-h-220 overflow-y-auto">
-                {Object.entries(Constants.CATEGORY_STATUS)
-                  .map(([key, value]) => ({
-                    key: Number(key) as 1 | 2 | 3,
-                    status: value,
-                  }))
-                  .map((item) => (
-                    <li
-                      key={item.key}
-                      className="px-16 py-12 cursor-pointer hover:bg-blue-0"
-                      onClick={() => {
-                        setSelected(item);
-                        setSelectedItem((prev) => ({
-                          ...prev,
-                          challengeStatus: item.key,
-                        }));
-                        setIsSelectOpen(false);
-                      }}
-                    >
-                      {item.status}
-                    </li>
-                  ))}
-              </ul>
-            )}
-          </div>
           <DraggableTodoList
-            todoList={
-              selectedItem?.todoList?.sort(
-                (a, b) => a.todoOrder - b.todoOrder
-              ) || []
-            }
+            todoList={[...(selectedItem?.todoList || [])].sort(
+              (a, b) => a.todoOrder - b.todoOrder
+            )}
             setTodoList={(list: Todo[]) => {
               setSelectedItem((prev) => ({
                 ...prev,
