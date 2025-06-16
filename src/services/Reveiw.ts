@@ -9,7 +9,11 @@ import {
 import { PaginationResponse } from "src/types/response";
 
 const fetchReivews = async (): Promise<PaginationResponse<Review[]>> => {
-  const res = await axiosInstance.get(`${Config.SERVER_URL}/review/fetch`, {});
+  const res = await axiosInstance.get(`${Config.SERVER_URL}/review/fetch`, {
+    params: {
+      size: 100,
+    },
+  });
 
   return res?.data?.data;
 };
